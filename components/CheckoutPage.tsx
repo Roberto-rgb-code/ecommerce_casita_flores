@@ -83,6 +83,15 @@ export default function CheckoutPage() {
     setError("");
 
     try {
+      // Transformar items al formato esperado por la API
+      const formattedItems = cartState.items.map(item => ({
+        id: item.product.id,
+        title: item.product.title,
+        price: item.product.price,
+        image: item.product.image,
+        quantity: item.quantity,
+      }));
+
       // Crear sesión de checkout con Stripe
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -90,7 +99,7 @@ export default function CheckoutPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          items: cartState.items,
+          items: formattedItems,
           customerEmail: formData.email,
           customerName: `${formData.firstName} ${formData.lastName}`,
           deliveryDate: formData.deliveryDate,
@@ -356,12 +365,12 @@ export default function CheckoutPage() {
               {/* Items */}
               <div className="space-y-4 mb-6">
                 {cartState.items.map((item) => (
-                  <div key={item.id} className="flex gap-4">
+                  <div key={item.product.id} className="flex gap-4">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                      {item.image && (
+                      {item.product.image && (
                         <Image
-                          src={item.image}
-                          alt={item.title}
+                          src={item.product.image}
+                          alt={item.product.title}
                           fill
                           className="object-cover"
                         />
@@ -369,12 +378,12 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-1">
-                        {item.title}
+                        {item.product.title}
                       </h3>
                       <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
                     </div>
                     <div className="text-sm font-semibold text-gray-900">
-                      {(item.price * item.quantity).toLocaleString("es-MX", { style: "currency", currency: "MXN" })}
+                      {(item.product.price * item.quantity).toLocaleString("es-MX", { style: "currency", currency: "MXN" })}
                     </div>
                   </div>
                 ))}
