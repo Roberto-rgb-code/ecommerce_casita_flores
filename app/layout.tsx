@@ -14,6 +14,10 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "La Casita de las Flores",
   description: "Flores a domicilio — arreglos para cada ocasión.",
+  icons: {
+    icon: '/favicon.jpg',
+    apple: '/favicon.jpg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
