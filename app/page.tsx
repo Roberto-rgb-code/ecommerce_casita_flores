@@ -194,8 +194,8 @@ export default async function Home() {
             <div className="rounded-3xl overflow-hidden shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                alt="Hermoso arreglo floral de rosas"
-                src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=2070&auto=format&fit=crop"
+                alt="Hermoso arreglo floral de La Casita de las Flores"
+                src="/flores_sec.jpg"
                 className="w-full h-full object-cover"
               />
             </div>
