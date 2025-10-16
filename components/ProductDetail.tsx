@@ -46,12 +46,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  // Simular múltiples imágenes del producto
-  const productImages = [
-    product.image,
-    product.image.replace("?q=80&w=1600", "?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3"),
-    product.image.replace("?q=80&w=1600", "?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-  ];
+  // Usar la imagen del producto (por ahora solo una imagen)
+  const productImages = [product.image];
 
   const handleAddToCart = async () => {
     setIsAdding(true);
@@ -107,27 +103,29 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               )}
             </div>
 
-            {/* Thumbnails */}
-            <div className="flex gap-3">
-              {productImages.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                    selectedImage === index
-                      ? "border-[var(--brand)]"
-                      : "border-transparent hover:border-gray-300"
-                  }`}
-                >
-                  <Image
-                    src={image}
-                    alt={`${product.title} ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+            {/* Thumbnails - solo mostrar si hay múltiples imágenes */}
+            {productImages.length > 1 && (
+              <div className="flex gap-3">
+                {productImages.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                      selectedImage === index
+                        ? "border-[var(--brand)]"
+                        : "border-transparent hover:border-gray-300"
+                    }`}
+                  >
+                    <Image
+                      src={image}
+                      alt={`${product.title} ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Información del producto */}
