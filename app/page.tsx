@@ -194,8 +194,8 @@ export default async function Home() {
             <div className="rounded-3xl overflow-hidden shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                alt={products[0]?.title || "Arreglo floral hermoso"}
-                src={products[0]?.image || "https://images.unsplash.com/photo-1574680096145-d05b474e2155?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80"}
+                alt="Hermoso arreglo floral de rosas"
+                src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=2070&auto=format&fit=crop"
                 className="w-full h-full object-cover"
               />
             </div>
