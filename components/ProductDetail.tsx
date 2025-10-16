@@ -1,0 +1,261 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useCartWithToast } from "@/contexts/CartContext";
+import type { Product } from "@/contexts/CartContext";
+
+const Icon = {
+  ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...p}>
+      <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Star: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...p}>
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+    </svg>
+  ),
+  Truck: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...p}>
+      <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="5.5" cy="18.5" r="2.5" fill="none" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="18.5" cy="18.5" r="2.5" fill="none" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  ),
+  Shield: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...p}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Heart: (p: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...p}>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+};
+
+type ProductDetailProps = {
+  product: Product;
+};
+
+export default function ProductDetail({ product }: ProductDetailProps) {
+  const { addItemWithToast } = useCartWithToast();
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  // Simular múltiples imágenes del producto
+  const productImages = [
+    product.image,
+    product.image.replace("?q=80&w=1600", "?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3"),
+    product.image.replace("?q=80&w=1600", "?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+  ];
+
+  const handleAddToCart = async () => {
+    setIsAdding(true);
+    
+    // Agregar la cantidad seleccionada
+    for (let i = 0; i < quantity; i++) {
+      addItemWithToast(product);
+    }
+    
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 1000);
+  };
+
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1 && newQuantity <= 10) {
+      setQuantity(newQuantity);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="container-max py-8">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-[var(--muted)] mb-8">
+          <Link href="/" className="hover:text-[var(--brand)] transition-colors">
+            Inicio
+          </Link>
+          <span>/</span>
+          <Link href="#favoritas" className="hover:text-[var(--brand)] transition-colors">
+            Productos
+          </Link>
+          <span>/</span>
+          <span className="text-[var(--ink)]">{product.title}</span>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Imágenes */}
+          <div className="space-y-4">
+            {/* Imagen principal */}
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
+              <Image
+                src={productImages[selectedImage]}
+                alt={product.title}
+                fill
+                className="object-cover"
+                priority
+              />
+              {product.badge && (
+                <span className="absolute left-4 top-4 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[var(--ink)] shadow-sm">
+                  {product.badge}
+                </span>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            <div className="flex gap-3">
+              {productImages.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                    selectedImage === index
+                      ? "border-[var(--brand)]"
+                      : "border-transparent hover:border-gray-300"
+                  }`}
+                >
+                  <Image
+                    src={image}
+                    alt={`${product.title} ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Información del producto */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-light text-[var(--ink)] mb-2">
+                {product.title}
+              </h1>
+              <p className="text-lg text-[var(--muted)]">Melrose</p>
+            </div>
+
+            {/* Rating */}
+            {product.rating && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Icon.Star
+                      key={i}
+                      className={`w-5 h-5 ${
+                        i < Math.floor(product.rating!)
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-[var(--muted)]">
+                  {product.rating} ({product.reviews} reseñas)
+                </span>
+              </div>
+            )}
+
+            {/* Precio */}
+            <div className="text-4xl font-light text-[var(--brand)]">
+              {product.price.toLocaleString("es-MX", {
+                style: "currency",
+                currency: "MXN",
+              })}
+            </div>
+
+            {/* Descripción */}
+            <div className="space-y-4">
+              <p className="text-[var(--muted)] leading-relaxed">
+                Un hermoso arreglo floral cuidadosamente seleccionado para crear momentos especiales. 
+                Cada flor es elegida por su frescura y belleza, garantizando una experiencia única.
+              </p>
+              
+              <ul className="space-y-2 text-sm text-[var(--muted)]">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></span>
+                  Flores frescas seleccionadas a mano
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></span>
+                  Empaque premium para entrega
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></span>
+                  Garantía de frescura por 7 días
+                </li>
+              </ul>
+            </div>
+
+            {/* Cantidad */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-[var(--ink)]">
+                Cantidad
+              </label>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                  disabled={quantity <= 1}
+                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  -
+                </button>
+                <span className="w-12 text-center font-medium">{quantity}</span>
+                <button
+                  onClick={() => handleQuantityChange(quantity + 1)}
+                  disabled={quantity >= 10}
+                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Botones */}
+            <div className="space-y-3">
+              <button
+                onClick={handleAddToCart}
+                disabled={isAdding}
+                className="w-full btn btn-large disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isAdding ? "Agregando al carrito..." : "Agregar al carrito"}
+              </button>
+              
+              <button className="w-full btn-outline btn-large">
+                <Icon.Heart className="w-5 h-5 mr-2" />
+                Agregar a favoritos
+              </button>
+            </div>
+
+            {/* Información de envío */}
+            <div className="border-t border-gray-200 pt-6 space-y-4">
+              <div className="flex items-start gap-3">
+                <Icon.Truck className="w-6 h-6 text-[var(--brand)] mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-[var(--ink)]">Envío gratis</h3>
+                  <p className="text-sm text-[var(--muted)]">
+                    En compras mayores a $799 MXN. Entrega el mismo día en CDMX.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <Icon.Shield className="w-6 h-6 text-[var(--brand)] mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-[var(--ink)]">Garantía de calidad</h3>
+                  <p className="text-sm text-[var(--muted)]">
+                    Si no estás satisfecho, te reembolsamos o reemplazamos tu pedido.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

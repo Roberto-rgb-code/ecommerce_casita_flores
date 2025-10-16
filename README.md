@@ -1,8 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌸 La Casita de las Flores - E-commerce
 
-## Getting Started
+E-commerce de flores con Next.js, Supabase y Stripe.
 
-First, run the development server:
+## 🚀 Setup Local
+
+### 1. Crear archivo de credenciales
+
+```powershell
+.\crear-env-local.ps1
+```
+
+Este comando crea el archivo `.env.local` con todas las credenciales necesarias.
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+```
+
+### 3. Ejecutar el servidor de desarrollo
 
 ```bash
 npm run dev
@@ -10,8 +26,6 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
