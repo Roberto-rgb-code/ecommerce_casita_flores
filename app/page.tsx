@@ -138,7 +138,7 @@ export default async function Home() {
                   <CategoryCard
                     key={category.slug}
                     title={category.title}
-                    image={categoryProduct?.image || "https://images.unsplash.com/photo-1518709594023-6eab9bab7b23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"}
+                    image={categoryProduct?.image || "https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=2070&auto=format&fit=crop"}
                     href={`/category/${category.slug}`}
                   />
                 );
