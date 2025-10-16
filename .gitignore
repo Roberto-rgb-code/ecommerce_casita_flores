@@ -41,6 +41,7 @@ yarn-error.log*
 
 # Credenciales locales (NO subir a GitHub)
 CREDENCIALES-LOCALES.txt
+crear-env-local.ps1
 
 # vercel
 .vercel
