@@ -151,18 +151,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 // Hook personalizado para agregar productos con notificación
 export function useCartWithToast() {
   const { state, dispatch } = useCart();
-  const { dispatch: toastDispatch } = useToast();
+  const { showToast } = useToast();
 
   const addItemWithToast = (product: Product) => {
     dispatch({ type: "ADD_ITEM", payload: product });
-    toastDispatch({
-      type: "ADD_TOAST",
-      payload: {
-        message: `${product.title} agregado al carrito`,
-        type: "success",
-        duration: 2000,
-      },
-    });
+    showToast(`${product.title} agregado al carrito`, "success", 2000);
   };
 
   return {

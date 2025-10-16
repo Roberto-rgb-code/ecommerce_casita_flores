@@ -49,13 +49,23 @@ function toastReducer(state: ToastState, action: ToastAction): ToastState {
 const ToastContext = createContext<{
   state: ToastState;
   dispatch: React.Dispatch<ToastAction>;
+  showToast: (message: string, type: ToastType, duration?: number) => void;
+  removeToast: (id: string) => void;
 } | null>(null);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(toastReducer, initialState);
 
+  const showToast = (message: string, type: ToastType, duration: number = 3000) => {
+    dispatch({ type: "ADD_TOAST", payload: { message, type, duration } });
+  };
+
+  const removeToast = (id: string) => {
+    dispatch({ type: "REMOVE_TOAST", payload: id });
+  };
+
   return (
-    <ToastContext.Provider value={{ state, dispatch }}>
+    <ToastContext.Provider value={{ state, dispatch, showToast, removeToast }}>
       {children}
     </ToastContext.Provider>
   );

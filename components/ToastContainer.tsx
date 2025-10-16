@@ -4,7 +4,7 @@ import { useToast } from "@/contexts/ToastContext";
 import Toast from "./Toast";
 
 export default function ToastContainer() {
-  const { state, dispatch } = useToast();
+  const { state, removeToast } = useToast();
 
   return (
     <>
@@ -15,7 +15,7 @@ export default function ToastContainer() {
           type={toast.type}
           duration={toast.duration}
           isVisible={true}
-          onClose={() => dispatch({ type: "REMOVE_TOAST", payload: toast.id })}
+          onClose={() => removeToast(toast.id)}
         />
       ))}
     </>
