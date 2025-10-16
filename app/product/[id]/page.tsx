@@ -3,9 +3,9 @@ import { getProducts, getProductById } from "@/lib/products";
 import ProductDetail from "@/components/ProductDetail";
 
 type Props = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function generateStaticParams() {
@@ -16,7 +16,8 @@ export async function generateStaticParams() {
 }
 
 export default async function ProductPage({ params }: Props) {
-  const product = await getProductById(params.id);
+  const { id } = await params;
+  const product = await getProductById(id);
 
   if (!product) {
     notFound();

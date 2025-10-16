@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation";
 import CategoryPage from "@/components/CategoryPage";
 
-type Props = {
-  params: {
-    slug: string;
-  };
-};
-
 import { getProducts } from "@/lib/products";
+
+type Props = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
 const categories = [
   {
@@ -39,7 +39,8 @@ export async function generateStaticParams() {
 }
 
 export default async function CategoryPageRoute({ params }: Props) {
-  const category = categories.find((c) => c.slug === params.slug);
+  const { slug } = await params;
+  const category = categories.find((c) => c.slug === slug);
 
   if (!category) {
     notFound();
