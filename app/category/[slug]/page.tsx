@@ -3,6 +3,9 @@ import CategoryPage from "@/components/CategoryPage";
 
 import { getProducts } from "@/lib/products";
 
+// Forzar revalidación de caché cada 60 segundos
+export const revalidate = 60;
+
 type Props = {
   params: Promise<{
     slug: string;
@@ -12,7 +15,7 @@ type Props = {
 const categories = [
   {
     slug: "amor",
-    title: "Amor",
+    title: "Amor / Aniversario",
     description: "Expresa tu amor con nuestros hermosos arreglos florales",
   },
   {
@@ -21,9 +24,29 @@ const categories = [
     description: "Celebra un año más de vida con flores frescas y coloridas",
   },
   {
-    slug: "aniversario",
-    title: "Aniversario",
-    description: "Conmemora momentos especiales con arreglos elegantes",
+    slug: "amistad",
+    title: "Amistad",
+    description: "Arreglos florales para celebrar la amistad",
+  },
+  {
+    slug: "agradecimiento",
+    title: "Agradecimiento",
+    description: "Muestra tu gratitud con flores hermosas",
+  },
+  {
+    slug: "graduacion",
+    title: "Graduación",
+    description: "Celebra este logro tan importante",
+  },
+  {
+    slug: "condolencias",
+    title: "Condolencias",
+    description: "Arreglos florales para momentos difíciles",
+  },
+  {
+    slug: "nacimiento",
+    title: "Nacimiento",
+    description: "Flores para celebrar la llegada de un bebé",
   },
   {
     slug: "eventos",

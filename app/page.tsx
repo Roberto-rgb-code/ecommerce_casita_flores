@@ -3,6 +3,9 @@ import ProductCard from "@/components/ProductCard";
 import HeroCarousel from "@/components/HeroCarousel";
 import { getProducts } from "@/lib/products";
 
+// Forzar revalidación de caché cada 60 segundos
+export const revalidate = 60;
+
 export default async function Home() {
   // Obtener productos desde Supabase
   const products = await getProducts();
@@ -120,7 +123,7 @@ export default async function Home() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {(() => {
-              // Categorías como en Melrose
+              // Categorías sincronizadas con las páginas de categoría
               const categories = [
                 { slug: "amor", title: "Amor / Aniversario" },
                 { slug: "cumpleaños", title: "Cumpleaños" },

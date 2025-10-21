@@ -43,9 +43,8 @@ export default function CategoryPage({ category }: CategoryPageProps) {
     const loadProducts = async () => {
       setLoading(true);
       try {
-        // Normalizar el nombre de la categoría para que coincida con la BD
-        const categoryName = category.title;
-        const results = await getProductsByCategory(categoryName);
+        // Usar el slug de la categoría para buscar en la BD
+        const results = await getProductsByCategory(category.slug);
         setProducts(results);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -55,7 +54,7 @@ export default function CategoryPage({ category }: CategoryPageProps) {
     };
     
     loadProducts();
-  }, [category.title]);
+  }, [category.slug]);
 
   // Filtrar productos por categoría
   const categoryProducts = useMemo(() => {
