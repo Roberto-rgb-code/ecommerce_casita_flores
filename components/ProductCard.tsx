@@ -12,6 +12,7 @@ type Product = {
   rating?: number;
   reviews?: number;
   image: string;
+  additional_images?: string[] | null;
   badge?: string;
 };
 
