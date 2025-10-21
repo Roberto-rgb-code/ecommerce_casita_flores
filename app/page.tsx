@@ -149,11 +149,25 @@ export default async function Home() {
               
               return categories.map((category) => {
                 const categoryProduct = products.find(p => p.category?.toLowerCase() === category.slug);
+                // Usar imagen específica para cada categoría si no hay producto
+                const defaultImages: { [key: string]: string } = {
+                  "amor": "/flores_hero2.jpeg",
+                  "cumpleanos": "/flores_hero3.jpeg", 
+                  "amistad": "/flores_hero4.jpeg",
+                  "agradecimiento": "/flores_hero5.jpeg",
+                  "graduacion": "/flores_hero1.jpeg",
+                  "condolencias": "/flores_hero2.jpeg",
+                  "nacimiento": "/flores_hero3.jpeg",
+                  "eventos": "/flores_hero4.jpeg"
+                };
+                
+                const imageUrl = categoryProduct?.image || defaultImages[category.slug] || "/flores_hero1.jpeg";
+                
                 return (
                   <CategoryCard
                     key={category.slug}
                     title={category.title}
-                    image={categoryProduct?.image || "/flores_hero1.jpeg"}
+                    image={imageUrl}
                     href={`/category/${category.slug}`}
                   />
                 );

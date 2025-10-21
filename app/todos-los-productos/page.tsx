@@ -1,6 +1,5 @@
 import { getProducts } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
-import { revalidate } from "@/lib/products";
 
 // Forzar revalidación de caché cada 60 segundos
 export const revalidate = 60;

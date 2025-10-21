@@ -26,12 +26,14 @@ export default function CategoryCard({
       href={categoryHref} 
       className="group relative rounded-3xl overflow-hidden card bg-white transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl"
     >
-      <div className="relative aspect-square">
+      <div className="relative aspect-square overflow-hidden">
         <Image 
           src={image} 
           alt={title} 
           fill 
-          className="object-cover transition-all duration-700 scale-100 group-hover:scale-110 group-hover:rotate-1" 
+          className="object-cover object-center transition-all duration-700 scale-100 group-hover:scale-110 group-hover:rotate-1" 
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+          priority={false}
         />
       </div>
       
