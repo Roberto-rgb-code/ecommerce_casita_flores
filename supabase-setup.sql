@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   price DECIMAL(10, 2) NOT NULL,
   category VARCHAR(100),
   image_url TEXT,
+  additional_images TEXT[], -- Array de URLs de imágenes adicionales
   badge VARCHAR(50),
   rating DECIMAL(3, 2) DEFAULT 5.0,
   reviews INTEGER DEFAULT 0,
@@ -59,14 +60,17 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
 
 -- Política: Cualquiera puede leer productos activos
+DROP POLICY IF EXISTS "Public can read active products" ON public.products;
 CREATE POLICY "Public can read active products" ON public.products
   FOR SELECT USING (is_active = true);
 
 -- Política: Cualquiera puede insertar órdenes
+DROP POLICY IF EXISTS "Public can insert orders" ON public.orders;
 CREATE POLICY "Public can insert orders" ON public.orders
   FOR INSERT WITH CHECK (true);
 
 -- Política: Cualquiera puede insertar items de orden
+DROP POLICY IF EXISTS "Public can insert order items" ON public.order_items;
 CREATE POLICY "Public can insert order items" ON public.order_items
   FOR INSERT WITH CHECK (true);
 
