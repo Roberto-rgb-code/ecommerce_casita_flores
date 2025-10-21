@@ -16,7 +16,7 @@ export default async function Home() {
 
         {/* Background Carousel */}
         <div className="absolute inset-0 z-0">
-          <HeroCarousel products={products} />
+          <HeroCarousel />
         </div>
 
         {/* Content */}
