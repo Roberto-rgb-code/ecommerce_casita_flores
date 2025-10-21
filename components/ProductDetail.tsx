@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartWithToast } from "@/contexts/CartContext";
 import type { Product } from "@/contexts/CartContext";
+import ImageGallery from "./ImageGallery";
 
 const Icon = {
   ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
@@ -87,17 +88,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Imágenes */}
           <div className="space-y-4">
-            {/* Imagen principal */}
+            {/* Usar ImageGallery para mejor experiencia */}
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
-              <Image
-                src={productImages[selectedImage]}
-                alt={product.title}
-                fill
-                className="object-cover"
-                priority
+              <ImageGallery 
+                images={productImages}
+                productName={product.title}
+                className="w-full h-full"
               />
               {product.badge && (
-                <span className="absolute left-4 top-4 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[var(--ink)] shadow-sm">
+                <span className="absolute left-4 top-4 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[var(--ink)] shadow-sm z-10">
                   {product.badge}
                 </span>
               )}
@@ -121,6 +120,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       alt={`${product.title} ${index + 1}`}
                       fill
                       className="object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/flores_hero1.jpeg';
+                      }}
                     />
                   </button>
                 ))}

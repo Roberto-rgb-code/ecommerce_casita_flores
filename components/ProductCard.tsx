@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartWithToast } from "@/contexts/CartContext";
 import { useState } from "react";
+import ImageGallery from "./ImageGallery";
 
 type Product = {
   id: string;
@@ -42,28 +43,48 @@ export default function ProductCard({ p }: { p: Product }) {
         {/* Imagen */}
         <Link href={`/product/${p.id}`} className="block relative">
           <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50">
-            <Image 
-              src={p.image || "https://images.unsplash.com/photo-1518709594023-6eab9bab7b23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"} 
-              alt={p.title} 
-              fill 
-              className="object-cover transition-all duration-700 group-hover:scale-110" 
-            />
+            {/* Usar ImageGallery si hay imágenes adicionales, sino usar Image normal */}
+            {(p.additional_images && p.additional_images.length > 0) ? (
+              <ImageGallery 
+                images={[p.image, ...p.additional_images].filter(Boolean)}
+                productName={p.title}
+                className="w-full h-full"
+              />
+            ) : (
+              <Image 
+                src={p.image || "/flores_hero1.jpeg"} 
+                alt={p.title} 
+                fill 
+                className="object-cover transition-all duration-700 group-hover:scale-110" 
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/flores_hero1.jpeg';
+                }}
+              />
+            )}
             
             {/* Overlay gradient en hover */}
             <div className={`absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
             
             {/* Badge */}
             {p.badge && (
-              <span className="absolute left-4 top-4 px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
+              <span className="absolute left-4 top-4 px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg z-10">
                 {p.badge}
               </span>
+            )}
+            
+            {/* Multiple images indicator */}
+            {p.additional_images && p.additional_images.length > 0 && (
+              <div className="absolute top-4 right-4 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded-full z-10">
+                +{p.additional_images.length}
+              </div>
             )}
             
             {/* Quick View Button */}
             <div className={`absolute inset-x-0 bottom-4 flex justify-center transition-all duration-300 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <Link 
                 href={`/product/${p.id}`}
-                className="px-6 py-2.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-semibold text-gray-900 hover:bg-white transition-all shadow-lg hover:shadow-xl"
+                className="px-6 py-2.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-semibold text-gray-900 hover:bg-white transition-all shadow-lg hover:shadow-xl z-10"
               >
                 Vista Rápida
               </Link>
