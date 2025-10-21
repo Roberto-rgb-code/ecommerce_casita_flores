@@ -96,10 +96,10 @@ export default async function Home() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl md:text-4xl font-bold">Favoritas</h2>
             <a
-              href="#"
+              href="/todos-los-productos"
               className="flex items-center gap-2 text-base font-medium text-[var(--ink)] hover:text-[var(--brand)] transition-colors"
             >
-              Shop All
+              Ver Todos
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -107,10 +107,22 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {products.map((p) => (
+            {products.slice(0, 6).map((p) => (
               <ProductCard key={p.id} p={p} />
             ))}
           </div>
+
+          {/* Mostrar botón "Ver más" si hay más de 6 productos */}
+          {products.length > 6 && (
+            <div className="text-center mt-8">
+              <a
+                href="/todos-los-productos"
+                className="btn-outline btn-large"
+              >
+                Ver más productos ({products.length - 6} más)
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
