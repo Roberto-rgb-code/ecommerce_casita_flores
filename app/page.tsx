@@ -126,7 +126,7 @@ export default async function Home() {
               // Categorías sincronizadas con las páginas de categoría
               const categories = [
                 { slug: "amor", title: "Amor / Aniversario" },
-                { slug: "cumpleaños", title: "Cumpleaños" },
+                { slug: "cumpleanos", title: "Cumpleaños" },
                 { slug: "amistad", title: "Amistad" },
                 { slug: "agradecimiento", title: "Agradecimiento" },
                 { slug: "graduacion", title: "Graduación" },
@@ -141,7 +141,7 @@ export default async function Home() {
                   <CategoryCard
                     key={category.slug}
                     title={category.title}
-                    image={categoryProduct?.image || "https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=2070&auto=format&fit=crop"}
+                    image={categoryProduct?.image || "/flores_hero1.jpeg"}
                     href={`/category/${category.slug}`}
                   />
                 );
