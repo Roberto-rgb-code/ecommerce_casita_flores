@@ -7,6 +7,7 @@ export type Product = {
   rating?: number;
   reviews?: number;
   image: string;
+  additional_images?: string[] | null;
   badge?: string;
   description?: string | null;
   category?: string | null;
@@ -35,6 +36,7 @@ export async function getProducts(): Promise<Product[]> {
     rating: product.rating || 0,
     reviews: product.reviews || 0,
     image: product.image_url || '',
+    additional_images: product.additional_images || null,
     badge: product.badge || undefined,
     description: product.description,
     category: product.category,
@@ -66,6 +68,7 @@ export async function getProductById(id: string): Promise<Product | null> {
     rating: data.rating || 0,
     reviews: data.reviews || 0,
     image: data.image_url || '',
+    additional_images: data.additional_images || null,
     badge: data.badge || undefined,
     description: data.description,
     category: data.category,
@@ -95,6 +98,7 @@ export async function getProductsByCategory(category: string): Promise<Product[]
     rating: product.rating || 0,
     reviews: product.reviews || 0,
     image: product.image_url || '',
+    additional_images: product.additional_images || null,
     badge: product.badge || undefined,
     description: product.description,
     category: product.category,
@@ -124,6 +128,7 @@ export async function searchProducts(query: string): Promise<Product[]> {
     rating: product.rating || 0,
     reviews: product.reviews || 0,
     image: product.image_url || '',
+    additional_images: product.additional_images || null,
     badge: product.badge || undefined,
     description: product.description,
     category: product.category,

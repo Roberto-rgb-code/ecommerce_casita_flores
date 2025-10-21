@@ -46,8 +46,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  // Usar la imagen del producto (por ahora solo una imagen)
-  const productImages = [product.image];
+  // Usar todas las imágenes del producto
+  const productImages = [product.image, ...(product.additional_images || [])].filter(Boolean);
 
   const handleAddToCart = async () => {
     setIsAdding(true);
