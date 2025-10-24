@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import './ImageGallery.css';
+import UnoptimizedImage from './UnoptimizedImage';
+import { createGalleryImages } from '@/lib/imageUtils';
 
 interface ImageGalleryProps {
   images: string[];
@@ -30,12 +32,7 @@ export default function ImageGalleryComponent({ images, productName = 'Producto'
   }
 
   // Convertir las imágenes al formato que espera react-image-gallery
-  const galleryImages = images.map((image, index) => ({
-    original: image,
-    thumbnail: image,
-    originalAlt: `${productName} - Imagen ${index + 1}`,
-    thumbnailAlt: `${productName} - Miniatura ${index + 1}`,
-  }));
+  const galleryImages = createGalleryImages(images, productName);
 
   if (!isClient) {
     // Renderizar una imagen simple durante la hidratación
@@ -66,27 +63,22 @@ export default function ImageGalleryComponent({ images, productName = 'Producto'
         onErrorImageURL="/flores_hero1.jpeg"
         renderItem={(item) => (
           <div className="image-gallery-image">
-            <img
-              src={item.original}
-              alt={item.originalAlt}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/flores_hero1.jpeg';
-              }}
+            <UnoptimizedImage
+              src={item.original || '/flores_hero1.jpeg'}
+              alt={item.originalAlt || `${productName} - Imagen`}
+              fill
+              className="w-full h-full"
             />
           </div>
         )}
         renderThumbInner={(item) => (
           <div className="image-gallery-thumbnail-inner">
-            <img
-              src={item.thumbnail}
-              alt={item.thumbnailAlt}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/flores_hero1.jpeg';
-              }}
+            <UnoptimizedImage
+              src={item.thumbnail || '/flores_hero1.jpeg'}
+              alt={item.thumbnailAlt || `${productName} - Miniatura`}
+              width={80}
+              height={80}
+              className="w-full h-full"
             />
           </div>
         )}
