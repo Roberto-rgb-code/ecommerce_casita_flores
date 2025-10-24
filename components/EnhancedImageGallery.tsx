@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import './ImageGallery.css';
+import UnoptimizedImage from './UnoptimizedImage';
 
 interface EnhancedImageGalleryProps {
   images: string[];
@@ -96,29 +97,22 @@ export default function EnhancedImageGallery({
         onScreenChange={handleFullscreenChange}
         renderItem={(item) => (
           <div className="image-gallery-image">
-            <img
-              src={item.original}
-              alt={item.originalAlt}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/flores_hero1.jpeg';
-              }}
-              loading="lazy"
+            <UnoptimizedImage
+              src={item.original || '/flores_hero1.jpeg'}
+              alt={item.originalAlt || `${productName} - Imagen`}
+              fill
+              className="w-full h-full"
             />
           </div>
         )}
         renderThumbInner={(item) => (
           <div className="image-gallery-thumbnail-inner">
-            <img
-              src={item.thumbnail}
-              alt={item.thumbnailAlt}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/flores_hero1.jpeg';
-              }}
-              loading="lazy"
+            <UnoptimizedImage
+              src={item.thumbnail || '/flores_hero1.jpeg'}
+              alt={item.thumbnailAlt || `${productName} - Miniatura`}
+              width={80}
+              height={80}
+              className="w-full h-full"
             />
           </div>
         )}

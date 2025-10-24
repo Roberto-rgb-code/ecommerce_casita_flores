@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useImageGallery } from '@/hooks/useImageGallery';
+import UnoptimizedImage from './UnoptimizedImage';
 
 interface MobileImageGalleryProps {
   images: string[];
@@ -26,6 +27,12 @@ export default function MobileImageGallery({
     goToSlide,
     handleImageError,
   } = useImageGallery({ images, productName });
+
+  // Wrapper para manejar errores de imagen
+  const handleError = () => {
+    // Simplemente no hacemos nada, UnoptimizedImage ya maneja el fallback
+    console.log('Error de imagen en MobileImageGallery');
+  };
 
   // Configuración para móviles
   const minSwipeDistance = 50;
@@ -78,14 +85,14 @@ export default function MobileImageGallery({
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <img
+        <UnoptimizedImage
           src={images[currentIndex]}
           alt={`${productName} - Imagen ${currentIndex + 1}`}
-          className={`w-full h-full object-cover transition-transform duration-300 ${
+          fill
+          className={`w-full h-full transition-transform duration-300 ${
             isDragging ? 'scale-105' : 'scale-100'
           }`}
-          onError={handleImageError}
-          draggable={false}
+          onError={handleError}
         />
 
         {/* Indicador de múltiples imágenes */}
@@ -128,11 +135,13 @@ export default function MobileImageGallery({
                   : 'border-gray-300 hover:border-gray-400'
               }`}
             >
-              <img
+              <UnoptimizedImage
                 src={image}
                 alt={`${productName} - Miniatura ${index + 1}`}
-                className="w-full h-full object-cover"
-                onError={handleImageError}
+                width={64}
+                height={64}
+                className="w-full h-full"
+                onError={handleError}
               />
             </button>
           ))}
