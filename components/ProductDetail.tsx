@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartWithToast } from "@/contexts/CartContext";
 import type { Product } from "@/contexts/CartContext";
-import ImageGallery from "./ImageGallery";
+import ResponsiveImageGallery from "./ResponsiveImageGallery";
 
 const Icon = {
   ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
@@ -88,12 +88,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Imágenes */}
           <div className="space-y-4">
-            {/* Usar ImageGallery para mejor experiencia */}
+            {/* Usar ResponsiveImageGallery para mejor experiencia */}
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
-              <ImageGallery 
+              <ResponsiveImageGallery 
                 images={productImages}
                 productName={product.title}
                 className="w-full h-full"
+                showThumbnails={true}
+                showFullscreenButton={true}
+                showBullets={true}
+                showNav={true}
+                autoPlay={false}
               />
               {product.badge && (
                 <span className="absolute left-4 top-4 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[var(--ink)] shadow-sm z-10">
