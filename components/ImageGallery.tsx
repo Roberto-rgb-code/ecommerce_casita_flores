@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 
 interface ImageGalleryProps {
   images: string[];
@@ -12,6 +13,9 @@ export default function ImageGallery({ images, productName = 'Producto', classNa
   const galleryRef = useRef<HTMLDivElement>(null);
   const lightGalleryRef = useRef<any>(null);
   const [isClient, setIsClient] = useState(false);
+
+  // Debug: Log images
+  console.log('ImageGallery images:', images);
 
   useEffect(() => {
     setIsClient(true);
@@ -80,10 +84,8 @@ export default function ImageGallery({ images, productName = 'Producto', classNa
     return (
       <div className={`bg-gray-200 rounded-lg flex items-center justify-center ${className}`}>
         <div className="text-gray-500 text-center p-4">
-          <svg className="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-          </svg>
-          <p>Sin imágenes disponibles</p>
+          <span className="text-4xl">📦</span>
+          <p className="text-xs mt-1">Sin imagen</p>
         </div>
       </div>
     );
@@ -92,15 +94,18 @@ export default function ImageGallery({ images, productName = 'Producto', classNa
   return (
     <div ref={galleryRef} className={className}>
       {/* Main image display */}
-      <div className="relative group cursor-pointer">
-        <img
+      <div className="relative group cursor-pointer w-full h-full">
+        <Image
           src={images[0]}
           alt={`${productName} - Imagen principal`}
-          className="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = '/flores_hero1.jpeg'; // Fallback image
           }}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority
         />
         
         {/* Overlay with gallery icon */}
@@ -124,7 +129,13 @@ export default function ImageGallery({ images, productName = 'Producto', classNa
       <div className="hidden">
         {images.map((image, index) => (
           <div key={index} className="gallery-item">
-            <img src={image} alt={`${productName} - Imagen ${index + 1}`} />
+            <Image 
+              src={image} 
+              alt={`${productName} - Imagen ${index + 1}`} 
+              width={100} 
+              height={100}
+              className="object-cover"
+            />
           </div>
         ))}
       </div>
