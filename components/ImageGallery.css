@@ -43,6 +43,8 @@
   justify-content: center;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  z-index: 10;
+  position: relative;
 }
 
 .image-gallery-left-nav:hover,
@@ -63,6 +65,8 @@
   border-radius: 0.5rem;
   padding: 0.5rem;
   transition: all 0.3s ease;
+  z-index: 10;
+  position: relative;
 }
 
 .image-gallery-fullscreen-button:hover {

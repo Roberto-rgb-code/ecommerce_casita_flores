@@ -138,8 +138,8 @@ export default function Header() {
               <Icon.Flower className="w-3 h-3 opacity-60"/>
             </div>
             <div className="flex gap-4 text-xs">
-              <a href="tel:8000000000" className="phone-link">📞 800 000 0000</a>
-              <a href="tel:5500000000" className="phone-link">📞 55 0000 0000</a>
+              <a href="tel:3322807617" className="phone-link">📞 33 2280 7617</a>
+              <a href="https://wa.me/523322807617" className="phone-link" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
             </div>
           </div>
         </div>
@@ -269,8 +269,8 @@ export default function Header() {
                   </a>
                 </div>
                 <div className="mobile-phones">
-                  <a href="tel:8000000000" className="mobile-phone">📞 800 000 0000</a>
-                  <a href="tel:5500000000" className="mobile-phone">📞 55 0000 0000</a>
+                  <a href="tel:3322807617" className="mobile-phone">📞 33 2280 7617</a>
+                  <a href="https://wa.me/523322807617" className="mobile-phone" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
                 </div>
               </div>
             </div>

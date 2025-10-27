@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProducts, getProductById } from "@/lib/products";
-import ProductDetail from "@/components/ProductDetail";
+import ProductDetailMelrose from "@/components/ProductDetailMelrose";
 
 type Props = {
   params: Promise<{
@@ -23,5 +23,5 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  return <ProductDetail product={product} />;
+  return <ProductDetailMelrose product={product} />;
 }
