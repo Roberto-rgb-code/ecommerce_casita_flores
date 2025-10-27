@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useCartWithToast } from "@/contexts/CartContext";
 import type { Product } from "@/contexts/CartContext";
 import ResponsiveImageGallery from "./ResponsiveImageGallery";
-import ImageDebug from "./ImageDebug";
 
 const Icon = {
   ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
@@ -77,40 +76,34 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container-max py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-[var(--muted)] mb-8">
-          <Link href="/" className="hover:text-[var(--brand)] transition-colors">
-            Inicio
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb elegante */}
+        <nav className="mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-[var(--brand)] transition-colors duration-200">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver a productos
           </Link>
-          <span>/</span>
-          <Link href="#favoritas" className="hover:text-[var(--brand)] transition-colors">
-            Productos
-          </Link>
-          <span>/</span>
-          <span className="text-[var(--ink)]">{product.title}</span>
-        </div>
+        </nav>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Imágenes */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Galería de imágenes */}
           <div className="space-y-4">
-            {/* Debug: Mostrar información de imágenes */}
-            <ImageDebug images={productImages} productName={product.title} />
-            
-            {/* Usar ResponsiveImageGallery para mejor experiencia */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
+            {/* Imagen principal */}
+            <div className="aspect-square overflow-hidden rounded-2xl bg-gray-100">
               <ResponsiveImageGallery 
                 images={productImages}
                 productName={product.title}
                 className="w-full h-full"
-                showThumbnails={true}
+                showThumbnails={false}
                 showFullscreenButton={true}
                 showBullets={true}
                 showNav={true}
                 autoPlay={false}
               />
               {product.badge && (
-                <span className="absolute left-4 top-4 px-3 py-1 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[var(--ink)] shadow-sm z-10">
+                <span className="absolute top-4 left-4 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--brand)] text-white">
                   {product.badge}
                 </span>
               )}
@@ -147,21 +140,22 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
           {/* Información del producto */}
           <div className="space-y-6">
+            {/* Header del producto */}
             <div>
-              <h1 className="text-3xl md:text-4xl font-light text-[var(--ink)] mb-2">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                 {product.title}
               </h1>
-              <p className="text-lg text-[var(--muted)]">Melrose</p>
+              <p className="text-lg text-gray-500 mt-2">Melrose</p>
             </div>
 
             {/* Rating */}
             {product.rating && (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <Icon.Star
                       key={i}
-                      className={`w-5 h-5 ${
+                      className={`h-5 w-5 ${
                         i < Math.floor(product.rating!)
                           ? "text-yellow-400"
                           : "text-gray-300"
@@ -169,14 +163,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     />
                   ))}
                 </div>
-                <span className="text-sm text-[var(--muted)]">
+                <span className="text-sm text-gray-500">
                   {product.rating} ({product.reviews} reseñas)
                 </span>
               </div>
             )}
 
             {/* Precio */}
-            <div className="text-4xl font-light text-[var(--brand)]">
+            <div className="text-3xl font-bold text-gray-900">
               {product.price.toLocaleString("es-MX", {
                 style: "currency",
                 currency: "MXN",
@@ -184,48 +178,56 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             </div>
 
             {/* Descripción */}
-            <div className="space-y-4">
-              <p className="text-[var(--muted)] leading-relaxed">
+            <div>
+              <p className="text-base text-gray-700 leading-7">
                 Un hermoso arreglo floral cuidadosamente seleccionado para crear momentos especiales. 
                 Cada flor es elegida por su frescura y belleza, garantizando una experiencia única.
               </p>
-              
-              <ul className="space-y-2 text-sm text-[var(--muted)]">
+            </div>
+
+            {/* Características */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-900 mb-3">Características</h3>
+              <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></span>
+                  <svg className="h-4 w-4 text-[var(--brand)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
                   Flores frescas seleccionadas a mano
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></span>
+                  <svg className="h-4 w-4 text-[var(--brand)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
                   Empaque premium para entrega
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-[var(--brand)] rounded-full"></span>
+                  <svg className="h-4 w-4 text-[var(--brand)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
                   Garantía de frescura por 7 días
                 </li>
               </ul>
             </div>
 
             {/* Cantidad */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-[var(--ink)]">
-                Cantidad
-              </label>
-              <div className="flex items-center gap-3">
+            <div>
+              <label className="text-sm font-medium text-gray-900">Cantidad</label>
+              <div className="mt-2 flex items-center gap-3">
                 <button
                   onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={quantity <= 1}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="h-10 w-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  -
+                  <span className="text-lg font-medium">-</span>
                 </button>
-                <span className="w-12 text-center font-medium">{quantity}</span>
+                <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
                 <button
                   onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={quantity >= 10}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="h-10 w-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  +
+                  <span className="text-lg font-medium">+</span>
                 </button>
               </div>
             </div>
@@ -235,36 +237,38 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <button
                 onClick={handleAddToCart}
                 disabled={isAdding}
-                className="w-full btn btn-large disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[var(--brand)] text-white py-3 px-6 rounded-lg font-medium hover:bg-[var(--brand)]/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isAdding ? "Agregando al carrito..." : "Agregar al carrito"}
               </button>
               
-              <button className="w-full btn-outline btn-large">
-                <Icon.Heart className="w-5 h-5 mr-2" />
+              <button className="w-full border border-[var(--brand)] text-[var(--brand)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--brand)] hover:text-white transition-colors flex items-center justify-center gap-2">
+                <Icon.Heart className="w-5 h-5" />
                 Agregar a favoritos
               </button>
             </div>
 
             {/* Información de envío */}
-            <div className="border-t border-gray-200 pt-6 space-y-4">
-              <div className="flex items-start gap-3">
-                <Icon.Truck className="w-6 h-6 text-[var(--brand)] mt-0.5" />
-                <div>
-                  <h3 className="font-medium text-[var(--ink)]">Envío gratis</h3>
-                  <p className="text-sm text-[var(--muted)]">
-                    En compras mayores a $799 MXN. Entrega el mismo día en CDMX.
-                  </p>
+            <div className="border-t border-gray-200 pt-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <Icon.Truck className="h-5 w-5 text-[var(--brand)] mt-0.5" />
+                  <div>
+                    <h3 className="font-medium text-gray-900">Envío gratis</h3>
+                    <p className="text-sm text-gray-500">
+                      En compras mayores a $799 MXN. Entrega el mismo día en CDMX.
+                    </p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Icon.Shield className="w-6 h-6 text-[var(--brand)] mt-0.5" />
-                <div>
-                  <h3 className="font-medium text-[var(--ink)]">Garantía de calidad</h3>
-                  <p className="text-sm text-[var(--muted)]">
-                    Si no estás satisfecho, te reembolsamos o reemplazamos tu pedido.
-                  </p>
+                
+                <div className="flex items-start gap-3">
+                  <Icon.Shield className="h-5 w-5 text-[var(--brand)] mt-0.5" />
+                  <div>
+                    <h3 className="font-medium text-gray-900">Garantía de calidad</h3>
+                    <p className="text-sm text-gray-500">
+                      Si no estás satisfecho, te reembolsamos o reemplazamos tu pedido.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

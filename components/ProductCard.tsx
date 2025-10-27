@@ -82,23 +82,23 @@ export default function ProductCard({ p }: { p: Product }) {
             
             {/* Quick View Button */}
             <div className={`absolute inset-x-0 bottom-4 flex justify-center transition-all duration-300 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-              <Link 
-                href={`/product/${p.id}`}
+              <button 
+                onClick={() => window.location.href = `/product/${p.id}`}
                 className="px-6 py-2.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-semibold text-gray-900 hover:bg-white transition-all shadow-lg hover:shadow-xl z-10"
               >
                 Vista Rápida
-              </Link>
+              </button>
             </div>
           </div>
         </Link>
 
-        {/* Info Section */}
-        <div className="p-5 space-y-3">
+        {/* Info Section mejorada */}
+        <div className="p-6 space-y-4">
           {/* Category tag */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-pink-600 uppercase tracking-wider">Premium</span>
+            <span className="text-xs font-medium text-[var(--brand)] uppercase tracking-wider">Premium</span>
             {p.rating && (
-              <div className="flex items-center gap-1 text-xs text-gray-500">
+              <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
                 <span className="text-yellow-400">★</span>
                 <span>{p.rating}</span>
                 {p.reviews && <span>({p.reviews})</span>}
@@ -108,7 +108,7 @@ export default function ProductCard({ p }: { p: Product }) {
 
           {/* Title */}
           <Link href={`/product/${p.id}`}>
-            <h3 className="text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-pink-600 transition-colors cursor-pointer leading-snug">
+            <h3 className="text-lg font-semibold text-[var(--ink)] line-clamp-2 group-hover:text-[var(--brand)] transition-colors cursor-pointer leading-snug">
               {p.title}
             </h3>
           </Link>
@@ -116,7 +116,7 @@ export default function ProductCard({ p }: { p: Product }) {
           {/* Price and Button */}
           <div className="flex items-center justify-between pt-2">
             <div>
-              <p className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+              <p className="text-2xl font-bold bg-gradient-to-r from-[var(--brand)] to-pink-600 bg-clip-text text-transparent">
                 {p.price.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}
               </p>
             </div>
@@ -124,7 +124,7 @@ export default function ProductCard({ p }: { p: Product }) {
             <button 
               onClick={handleAddToCart}
               disabled={isAdding}
-              className="relative px-6 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold text-sm transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden group/btn"
+              className="relative px-6 py-2.5 rounded-full bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white font-semibold text-sm transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden group/btn"
             >
               <span className="relative z-10">
                 {isAdding ? "✓" : "Agregar"}
