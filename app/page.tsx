@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50/30 to-white">
       {/* HERO PREMIUM CON CARRUSEL */}
-      <section className="relative min-h-[700px] md:min-h-[800px] flex items-center overflow-hidden">
+      <section className="relative min-h-[500px] sm:min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex items-center overflow-hidden">
         {/* Overlay mejorado */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10" />
 
@@ -24,31 +24,31 @@ export default async function Home() {
         </div>
 
         {/* Content mejorado */}
-        <div className="relative z-20 py-20 w-full">
+        <div className="relative z-20 py-12 sm:py-16 md:py-20 w-full">
           <div className="container-max">
             <div className="max-w-3xl text-white">
-              <span className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-base font-medium mb-8 shadow-lg">
+              <span className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-sm sm:text-base font-medium mb-6 sm:mb-8 shadow-lg">
                 ✨ Flores frescas entregadas hoy
               </span>
 
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-light leading-tight mb-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-light leading-tight mb-6 sm:mb-8">
                 Instantes efímeros,
                 <br />
                 <span className="block font-serif italic text-pink-100 drop-shadow-lg">eternos en cada arreglo</span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-white/95 mb-10 max-w-2xl leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 mb-8 sm:mb-10 max-w-2xl leading-relaxed">
                 Envía las flores más frescas de la CDMX. Entrega el mismo día en
                 toda la zona metropolitana con nuestro servicio premium.
               </p>
 
-              <div className="flex flex-wrap gap-6 mb-16">
-                <a href="#favoritas" className="bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-2xl hover:scale-105 transition-all duration-300">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-12 sm:mb-16">
+                <a href="#favoritas" className="bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-2xl font-semibold text-base sm:text-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 text-center">
                   COMPRAR AHORA
                 </a>
                 <a
                   href="#categorias"
-                  className="border-2 border-white text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white hover:text-[var(--brand)] transition-all duration-300"
+                  className="border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-4 rounded-2xl font-semibold text-base sm:text-lg hover:bg-white hover:text-[var(--brand)] transition-all duration-300 text-center"
                 >
                   VER CATÁLOGO
                 </a>
@@ -92,30 +92,30 @@ export default async function Home() {
       </section>
 
       {/* FAVORITAS */}
-      <section id="favoritas" className="py-16 md:py-20">
-        <div className="container-wide">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-light text-[var(--ink)] mb-4">
+      <section id="favoritas" className="py-12 sm:py-16 md:py-20">
+        <div className="container-max">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-[var(--ink)] mb-3 sm:mb-4">
               Nuestras <span className="font-serif italic text-[var(--brand)]">Favoritas</span>
             </h2>
-            <p className="text-lg text-[var(--muted)] max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-[var(--muted)] max-w-2xl mx-auto px-4">
               Los arreglos más populares, cuidadosamente seleccionados para crear momentos inolvidables
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {products.slice(0, 6).map((p) => (
               <ProductCard key={p.id} p={p} />
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 sm:mt-12">
             <a
               href="/todos-los-productos"
-              className="inline-flex items-center gap-3 bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-2xl font-semibold text-base sm:text-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
             >
               Ver Todos los Productos
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>

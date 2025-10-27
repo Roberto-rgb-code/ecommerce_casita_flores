@@ -108,47 +108,47 @@ export default function ProductCard({ p }: { p: Product }) {
           </div>
         </Link>
 
-        {/* Info Section mejorada */}
-        <div className="p-6 space-y-4">
-          {/* Category tag */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-[var(--brand)] uppercase tracking-wider">Premium</span>
-            {p.rating && (
-              <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
-                <span className="text-yellow-400">★</span>
-                <span>{p.rating}</span>
-                {p.reviews && <span>({p.reviews})</span>}
-              </div>
-            )}
-          </div>
+         {/* Info Section mejorada */}
+         <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+           {/* Category tag */}
+           <div className="flex items-center gap-2">
+             <span className="text-xs font-medium text-[var(--brand)] uppercase tracking-wider">Premium</span>
+             {p.rating && (
+               <div className="flex items-center gap-1 text-xs text-[var(--muted)]">
+                 <span className="text-yellow-400">★</span>
+                 <span>{p.rating}</span>
+                 {p.reviews && <span>({p.reviews})</span>}
+               </div>
+             )}
+           </div>
 
-          {/* Title */}
-          <Link href={`/product/${p.id}`}>
-            <h3 className="text-lg font-semibold text-[var(--ink)] line-clamp-2 group-hover:text-[var(--brand)] transition-colors cursor-pointer leading-snug">
-              {p.title}
-            </h3>
-          </Link>
+           {/* Title */}
+           <Link href={`/product/${p.id}`}>
+             <h3 className="text-base sm:text-lg font-semibold text-[var(--ink)] line-clamp-2 group-hover:text-[var(--brand)] transition-colors cursor-pointer leading-snug">
+               {p.title}
+             </h3>
+           </Link>
 
-          {/* Price and Button */}
-          <div className="flex items-center justify-between pt-2">
-            <div>
-              <p className="text-2xl font-bold bg-gradient-to-r from-[var(--brand)] to-pink-600 bg-clip-text text-transparent">
-                {p.price.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}
-              </p>
-            </div>
-            
-            <button 
-              onClick={handleAddToCart}
-              disabled={isAdding}
-              className="relative px-6 py-2.5 rounded-full bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white font-semibold text-sm transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden group/btn"
-            >
-              <span className="relative z-10">
-                {isAdding ? "✓" : "Agregar"}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
-            </button>
-          </div>
-        </div>
+           {/* Price and Button */}
+           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 pt-2">
+             <div>
+               <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[var(--brand)] to-pink-600 bg-clip-text text-transparent">
+                 {p.price.toLocaleString("es-MX", { style: "currency", currency: "MXN" })}
+               </p>
+             </div>
+             
+             <button 
+               onClick={handleAddToCart}
+               disabled={isAdding}
+               className="relative w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[var(--brand)] to-pink-600 text-white font-semibold text-sm transition-all duration-300 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden group/btn"
+             >
+               <span className="relative z-10">
+                 {isAdding ? "✓" : "Agregar"}
+               </span>
+               <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+             </button>
+           </div>
+         </div>
 
         {/* Decorative corner accent */}
         <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink-100 to-transparent rounded-bl-full opacity-50" />

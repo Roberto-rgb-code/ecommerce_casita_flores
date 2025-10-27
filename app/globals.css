@@ -31,11 +31,11 @@ body {
 
 /* ===== Contenedor máx. estilo Shopify ===== */
 .container-max {
-  @apply max-w-[1200px] mx-auto px-4;
+  @apply max-w-[1200px] mx-auto px-4 sm:px-6;
 }
 
 .container-wide {
-  @apply max-w-[2600px] mx-auto px-6;
+  @apply max-w-[2600px] mx-auto px-4 sm:px-6;
 }
 
 /* ===== ANNOUNCEMENT BAR ===== */
@@ -491,4 +491,50 @@ body {
 .overflow-x-auto {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ===== RESPONSIVE MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 640px) {
+  /* Mejorar legibilidad en móviles */
+  .container-max {
+    @apply px-3;
+  }
+  
+  .container-wide {
+    @apply px-3;
+  }
+  
+  /* Ajustar tamaños de texto para móviles */
+  .logo-main-large {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+  
+  .logo-accent-large {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+  
+  /* Mejorar botones en móviles */
+  .action-btn-large {
+    @apply w-10 h-10;
+  }
+  
+  /* Ajustar navegación móvil */
+  .mobile-menu {
+    @apply w-full max-w-sm;
+  }
+  
+  /* Mejorar espaciado en móviles */
+  .mobile-nav-link {
+    @apply py-4 text-base;
+  }
+  
+  /* Optimizar tarjetas de producto para móviles */
+  .product-card-mobile {
+    @apply p-3;
+  }
+  
+  /* Mejorar botones de acción en móviles */
+  .btn-mobile {
+    @apply w-full py-3 text-base;
+  }
 }
