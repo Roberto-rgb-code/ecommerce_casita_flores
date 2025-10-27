@@ -28,6 +28,10 @@ export default function UnoptimizedImage({
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Debug: Log para verificar la imagen
+  console.log('UnoptimizedImage - src:', src);
+  console.log('UnoptimizedImage - alt:', alt);
+
   const handleError = () => {
     setImageError(true);
     setIsLoading(false);

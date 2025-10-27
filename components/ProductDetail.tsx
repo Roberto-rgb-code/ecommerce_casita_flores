@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCartWithToast } from "@/contexts/CartContext";
 import type { Product } from "@/contexts/CartContext";
 import ResponsiveImageGallery from "./ResponsiveImageGallery";
+import ImageDebug from "./ImageDebug";
 
 const Icon = {
   ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
@@ -49,6 +50,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
   // Usar todas las imágenes del producto
   const productImages = [product.image, ...(product.additional_images || [])].filter(Boolean);
+  
+  // Debug: Log para verificar las imágenes
+  console.log('ProductDetail - Product:', product);
+  console.log('ProductDetail - ProductImages:', productImages);
+  console.log('ProductDetail - Image count:', productImages.length);
 
   const handleAddToCart = async () => {
     setIsAdding(true);
@@ -88,6 +94,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Imágenes */}
           <div className="space-y-4">
+            {/* Debug: Mostrar información de imágenes */}
+            <ImageDebug images={productImages} productName={product.title} />
+            
             {/* Usar ResponsiveImageGallery para mejor experiencia */}
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
               <ResponsiveImageGallery 

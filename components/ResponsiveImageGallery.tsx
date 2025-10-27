@@ -20,6 +20,11 @@ export default function ResponsiveImageGallery(props: ResponsiveImageGalleryProp
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
+  // Debug: Log para verificar las props
+  console.log('ResponsiveImageGallery - Props:', props);
+  console.log('ResponsiveImageGallery - Images:', props.images);
+  console.log('ResponsiveImageGallery - Images count:', props.images?.length);
+
   useEffect(() => {
     setIsClient(true);
     
