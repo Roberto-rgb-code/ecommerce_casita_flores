@@ -1,6 +1,7 @@
 import CategoryCard from "@/components/CategoryCard";
 import ProductCard from "@/components/ProductCard";
 import HeroCarousel from "@/components/HeroCarousel";
+import LottieAnimation from "@/components/LottieAnimation";
 import { getProducts } from "@/lib/products";
 
 // Forzar revalidación de caché cada 60 segundos
@@ -248,7 +249,12 @@ export default async function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-6xl mb-4">"</div>
+              <LottieAnimation 
+                src="https://lottie.host/3beae153-e97f-45a6-a4d6-d158018ab35b/dtvJTqAbFq.lottie"
+                className="mb-4"
+                width={80}
+                height={80}
+              />
               <p className="text-lg text-[var(--muted)] mb-6 leading-relaxed italic">
                 Es como si hubieran leído mi mente para dar el regalo perfecto.
               </p>
@@ -256,7 +262,12 @@ export default async function Home() {
             </div>
 
             <div className="text-center">
-              <div className="text-6xl mb-4">"</div>
+              <LottieAnimation 
+                src="https://lottie.host/3beae153-e97f-45a6-a4d6-d158018ab35b/dtvJTqAbFq.lottie"
+                className="mb-4"
+                width={80}
+                height={80}
+              />
               <p className="text-lg text-[var(--muted)] mb-6 leading-relaxed italic">
                 Aún para momentos difíciles, es extraordinaria la belleza de los arreglos de La Casita de las Flores.
               </p>
@@ -264,7 +275,12 @@ export default async function Home() {
             </div>
 
             <div className="text-center">
-              <div className="text-6xl mb-4">"</div>
+              <LottieAnimation 
+                src="https://lottie.host/3beae153-e97f-45a6-a4d6-d158018ab35b/dtvJTqAbFq.lottie"
+                className="mb-4"
+                width={80}
+                height={80}
+              />
               <p className="text-lg text-[var(--muted)] mb-6 leading-relaxed italic">
                 Me robó el corazón, el alma y todas las sonrisas del mundo.
               </p>
@@ -272,7 +288,12 @@ export default async function Home() {
             </div>
 
             <div className="text-center">
-              <div className="text-6xl mb-4">"</div>
+              <LottieAnimation 
+                src="https://lottie.host/3beae153-e97f-45a6-a4d6-d158018ab35b/dtvJTqAbFq.lottie"
+                className="mb-4"
+                width={80}
+                height={80}
+              />
               <p className="text-lg text-[var(--muted)] mb-6 leading-relaxed italic">
                 Encontré la mejor manera de consentir a mis princesas.
               </p>
@@ -280,7 +301,12 @@ export default async function Home() {
             </div>
 
             <div className="text-center">
-              <div className="text-6xl mb-4">"</div>
+              <LottieAnimation 
+                src="https://lottie.host/3beae153-e97f-45a6-a4d6-d158018ab35b/dtvJTqAbFq.lottie"
+                className="mb-4"
+                width={80}
+                height={80}
+              />
               <p className="text-lg text-[var(--muted)] mb-6 leading-relaxed italic">
                 Hay algo diferente en la elegancia de sus arreglos.
               </p>
@@ -288,7 +314,12 @@ export default async function Home() {
             </div>
 
             <div className="text-center">
-              <div className="text-6xl mb-4">"</div>
+              <LottieAnimation 
+                src="https://lottie.host/3beae153-e97f-45a6-a4d6-d158018ab35b/dtvJTqAbFq.lottie"
+                className="mb-4"
+                width={80}
+                height={80}
+              />
               <p className="text-lg text-[var(--muted)] mb-6 leading-relaxed italic">
                 Hablar con el equipo me ayudó a dar en el clavo con el arreglo perfecto.
               </p>
