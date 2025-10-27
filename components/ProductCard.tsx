@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCartWithToast } from "@/contexts/CartContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ImageGallery from "./ImageGallery";
 
 type Product = {
@@ -21,6 +21,30 @@ export default function ProductCard({ p }: { p: Product }) {
   const { addItemWithToast } = useCartWithToast();
   const [isAdding, setIsAdding] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Crear array de todas las imágenes disponibles
+  const allImages = [p.image, ...(p.additional_images || [])].filter(Boolean);
+  
+  // Efecto para el carrusel automático cuando está en hover
+  useEffect(() => {
+    if (!isHovered || allImages.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === allImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 1500); // Cambiar imagen cada 1.5 segundos
+
+    return () => clearInterval(interval);
+  }, [isHovered, allImages.length]);
+
+  // Resetear índice cuando sale del hover
+  useEffect(() => {
+    if (!isHovered) {
+      setCurrentImageIndex(0);
+    }
+  }, [isHovered]);
 
   const handleAddToCart = async () => {
     setIsAdding(true);
@@ -41,27 +65,19 @@ export default function ProductCard({ p }: { p: Product }) {
       {/* Card Container con efecto de elevación */}
       <div className="relative bg-white rounded-3xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
         {/* Imagen */}
-        <Link href={`/product/${p.id}`} className="block relative">
-          <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50">
-            {/* Usar ImageGallery si hay imágenes adicionales, sino usar Image normal */}
-            {(p.additional_images && p.additional_images.length > 0) ? (
-              <ImageGallery 
-                images={[p.image, ...p.additional_images].filter(Boolean)}
-                productName={p.title}
-                className="w-full h-full"
-              />
-            ) : (
-              <Image 
-                src={p.image || "/flores_hero1.jpeg"} 
-                alt={p.title} 
-                fill 
-                className="object-cover transition-all duration-700 group-hover:scale-110" 
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/flores_hero1.jpeg';
-                }}
-              />
-            )}
+         <Link href={`/product/${p.id}`} className="block relative">
+           <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50">
+             {/* Carrusel automático de imágenes */}
+             <Image 
+               src={allImages[currentImageIndex] || "/flores_hero1.jpeg"} 
+               alt={p.title} 
+               fill 
+               className="object-cover transition-all duration-700 group-hover:scale-110" 
+               onError={(e) => {
+                 const target = e.target as HTMLImageElement;
+                 target.src = '/flores_hero1.jpeg';
+               }}
+             />
             
             {/* Overlay gradient en hover */}
             <div className={`absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
@@ -73,12 +89,12 @@ export default function ProductCard({ p }: { p: Product }) {
               </span>
             )}
             
-            {/* Multiple images indicator */}
-            {p.additional_images && p.additional_images.length > 0 && (
-              <div className="absolute top-4 right-4 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded-full z-10">
-                +{p.additional_images.length}
-              </div>
-            )}
+             {/* Multiple images indicator */}
+             {allImages.length > 1 && (
+               <div className="absolute top-4 right-4 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded-full z-10">
+                 {currentImageIndex + 1}/{allImages.length}
+               </div>
+             )}
             
             {/* Quick View Button */}
             <div className={`absolute inset-x-0 bottom-4 flex justify-center transition-all duration-300 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
