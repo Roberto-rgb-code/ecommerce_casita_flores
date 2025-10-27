@@ -160,21 +160,15 @@ export default async function Home() {
                 { slug: "eventos", title: "Eventos" }
               ];
               
-              return categories.map((category) => {
+              return categories.map((category, index) => {
                 const categoryProduct = products.find(p => p.category?.toLowerCase() === category.slug);
-                // Usar imagen específica para cada categoría si no hay producto
-                const defaultImages: { [key: string]: string } = {
-                  "amor": "/flores_hero2.jpeg",
-                  "cumpleanos": "/flores_hero3.jpeg", 
-                  "amistad": "/flores_hero4.jpeg",
-                  "agradecimiento": "/flores_hero5.jpeg",
-                  "graduacion": "/flores_hero1.jpeg",
-                  "condolencias": "/flores_hero2.jpeg",
-                  "nacimiento": "/flores_hero3.jpeg",
-                  "eventos": "/flores_hero4.jpeg"
-                };
+                // Usar imágenes del carousel del hero (1.png a 10.png)
+                const heroImages = [
+                  "/1.png", "/2.png", "/3.png", "/4.png", 
+                  "/5.png", "/6.png", "/7.png", "/8.png"
+                ];
                 
-                const imageUrl = categoryProduct?.image || defaultImages[category.slug] || "/flores_hero1.jpeg";
+                const imageUrl = categoryProduct?.image || heroImages[index] || "/1.png";
                 
                 return (
                   <CategoryCard
