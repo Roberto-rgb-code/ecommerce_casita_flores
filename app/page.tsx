@@ -231,7 +231,7 @@ export default async function Home() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt="Hermoso arreglo floral de La Casita de las Flores"
-                src="/flores_sec.jpg"
+                src="/9.png"
                 className="w-full h-full object-cover"
               />
             </div>
