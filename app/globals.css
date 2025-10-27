@@ -147,43 +147,6 @@ body {
   @apply text-2xl sm:text-3xl lg:text-4xl font-serif italic text-[var(--brand)] tracking-wide;
 }
 
-.search-desktop {
-  @apply hidden lg:flex items-center flex-1 max-w-md mx-6 relative;
-}
-
-.search-icon {
-  @apply absolute left-3 w-4 h-4 text-[var(--muted)] pointer-events-none;
-}
-
-.search-input {
-  @apply w-full h-10 pl-10 pr-4 rounded-xl border border-black/10 bg-white/80 backdrop-blur
-    text-sm placeholder:text-[var(--muted)]/60
-    outline-none transition-all duration-300
-    focus:border-[var(--brand)] focus:bg-white focus:ring-2 focus:ring-[var(--ring)]
-    hover:border-black/20;
-}
-
-.search-mobile {
-  @apply border-t bg-white/98 backdrop-blur-sm;
-}
-
-.search-mobile-wrapper {
-  @apply flex items-center gap-2 py-3 relative;
-}
-
-.search-mobile .search-icon {
-  @apply absolute left-4 w-5 h-5;
-}
-
-.search-mobile .search-input {
-  @apply flex-1 h-11 pl-12 pr-4 rounded-xl;
-}
-
-.search-btn {
-  @apply h-11 px-5 rounded-2xl bg-[var(--brand)] text-white font-medium
-    transition-all duration-300 hover:bg-[var(--brand-700)] hover:shadow-md
-    active:scale-95;
-}
 
 .nav-desktop {
   @apply hidden lg:flex items-center gap-1;

@@ -77,9 +77,7 @@ const NAV = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
   const [elevated, setElevated] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { state: cartState, dispatch: cartDispatch } = useCart();
@@ -113,14 +111,6 @@ export default function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setShowSearch(false);
-      setSearchQuery("");
-    }
-  };
 
   return (
     <>
@@ -167,18 +157,6 @@ export default function Header() {
               </div>
             </Link>
 
-            {/* Búsqueda desktop */}
-            <form onSubmit={handleSearch} className="search-desktop">
-              <Icon.Search className="search-icon"/>
-              <input
-                type="text"
-                placeholder="Buscar arreglos, flores, ocasiones…"
-                className="search-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </form>
-
             {/* Nav desktop */}
             <nav className="nav-desktop">
               {NAV.map(n => (
@@ -190,14 +168,6 @@ export default function Header() {
 
             {/* Acciones */}
             <div className="header-actions">
-              <button 
-                aria-label="Buscar" 
-                className="action-btn-large lg:hidden" 
-                onClick={() => setShowSearch(v => !v)}
-              >
-                <Icon.Search className="w-6 h-6"/>
-              </button>
-              
               {user ? (
                 <div className="relative">
                   <button 
@@ -264,25 +234,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Búsqueda mobile expandible */}
-        {showSearch && (
-          <div className="search-mobile">
-            <div className="container-max">
-              <form onSubmit={handleSearch} className="search-mobile-wrapper">
-                <Icon.Search className="search-icon"/>
-                <input
-                  type="text"
-                  placeholder="Buscar arreglos, flores, ocasiones…"
-                  className="search-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  autoFocus
-                />
-                <button type="submit" className="search-btn">Buscar</button>
-              </form>
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Menú móvil mejorado */}
