@@ -1,5 +1,23 @@
 import { supabase } from './supabase';
 
+// Helper function para procesar additional_images
+function processAdditionalImages(additionalImages: any): string[] | null {
+  if (!additionalImages) return null;
+  
+  if (typeof additionalImages === 'string') {
+    try {
+      return JSON.parse(additionalImages);
+    } catch (e) {
+      console.error('Error parsing additional_images JSON:', e);
+      return null;
+    }
+  } else if (Array.isArray(additionalImages)) {
+    return additionalImages;
+  }
+  
+  return null;
+}
+
 export type Product = {
   id: string;
   title: string;
@@ -36,7 +54,7 @@ export async function getProducts(): Promise<Product[]> {
     rating: product.rating || 0,
     reviews: product.reviews || 0,
     image: product.image_url || '',
-    additional_images: product.additional_images || null,
+    additional_images: processAdditionalImages(product.additional_images),
     badge: product.badge || undefined,
     description: product.description,
     category: product.category,
@@ -49,7 +67,7 @@ export async function getProducts(): Promise<Product[]> {
 export async function getProductById(id: string): Promise<Product | null> {
   const { data, error } = await supabase
     .from('products')
-    .select('*')
+    .select('id, title, description, price, image_url, additional_images, category, badge, rating, reviews, stock, is_active')
     .eq('id', id)
     .eq('is_active', true)
     .single();
@@ -61,6 +79,11 @@ export async function getProductById(id: string): Promise<Product | null> {
 
   if (!data) return null;
 
+  // Debug: Log para verificar los datos
+  console.log('getProductById - Raw data:', data);
+  console.log('getProductById - additional_images:', data.additional_images);
+  console.log('getProductById - Processed additional_images:', processAdditionalImages(data.additional_images));
+
   return {
     id: data.id,
     title: data.title,
@@ -68,7 +91,7 @@ export async function getProductById(id: string): Promise<Product | null> {
     rating: data.rating || 0,
     reviews: data.reviews || 0,
     image: data.image_url || '',
-    additional_images: data.additional_images || null,
+    additional_images: processAdditionalImages(data.additional_images),
     badge: data.badge || undefined,
     description: data.description,
     category: data.category,
