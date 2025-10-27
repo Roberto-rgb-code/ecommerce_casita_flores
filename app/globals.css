@@ -156,7 +156,7 @@ body {
 }
 
 .search-input {
-  @apply w-full h-10 pl-10 pr-4 rounded-full border border-black/10 bg-white/80 backdrop-blur
+  @apply w-full h-10 pl-10 pr-4 rounded-xl border border-black/10 bg-white/80 backdrop-blur
     text-sm placeholder:text-[var(--muted)]/60
     outline-none transition-all duration-300
     focus:border-[var(--brand)] focus:bg-white focus:ring-2 focus:ring-[var(--ring)]
@@ -176,7 +176,7 @@ body {
 }
 
 .search-mobile .search-input {
-  @apply flex-1 h-11 pl-12 pr-4 rounded-2xl;
+  @apply flex-1 h-11 pl-12 pr-4 rounded-xl;
 }
 
 .search-btn {
