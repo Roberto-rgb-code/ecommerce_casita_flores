@@ -32,7 +32,6 @@ export default function CheckoutPage() {
     lastName: "",
     email: user?.email || "",
     phone: "",
-    address: "",
     city: "",
     zipCode: "",
     deliveryDate: "",
@@ -195,7 +194,7 @@ export default function CheckoutPage() {
           deliveryDate: formData.deliveryDate,
           deliveryTimeSlot: formData.deliveryTimeSlot,
           customerPhone: formData.phone,
-          customerAddress: formData.address,
+          customerAddress: formData.deliveryAddress,
           customerCity: formData.city,
           customerZipCode: formData.zipCode,
           // Nuevos campos para dedicatoria
@@ -319,311 +318,347 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
                 </div>
               )}
 
-              {/* Información de contacto */}
+              {/* Información de Contacto y Dedicatoria */}
               <div className="bg-white rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-6">Información de Contacto</h2>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Nombre
-                      </label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                        required
-                      />
+                <h2 className="text-lg font-semibold mb-6">📋 Información de Contacto y Dedicatoria</h2>
+                
+                {/* Información del Cliente */}
+                <div className="mb-8">
+                  <h3 className="text-md font-medium text-gray-800 mb-4 flex items-center">
+                    <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                    Datos del Cliente
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Nombre <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Apellido <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          required
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Apellido
-                      </label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                        required
-                      />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Teléfono <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
+                {/* Información de la Dedicatoria */}
+                <div>
+                  <h3 className="text-md font-medium text-gray-800 mb-4 flex items-center">
+                    <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                    Datos para la Tarjeta de Dedicatoria
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          ¿Quién envía? <span className="text-gray-500">(opcional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="senderName"
+                          value={formData.senderName}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          placeholder="Dejar vacío para anónimo"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          ¿Quién recibe? <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="recipientName"
+                          value={formData.recipientName}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          required
+                        />
+                      </div>
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Teléfono
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Mensaje para la tarjeta de dedicatoria
+                      </label>
+                      <textarea
+                        name="dedicationMessage"
+                        value={formData.dedicationMessage}
+                        onChange={(e) => setFormData({...formData, dedicationMessage: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        rows={3}
+                        placeholder="Escribe tu mensaje especial..."
+                      />
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="isAnonymous"
+                        checked={formData.isAnonymous}
+                        onChange={handleInputChange}
+                        className="mr-2"
+                      />
+                      <label className="text-sm text-gray-700">
+                        Envío anónimo
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Datos para la tarjeta de dedicatoria */}
-              <div className="bg-white rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-6">Datos para la tarjeta de dedicatoria</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ¿Quién envía? <span className="text-gray-500">(opcional)</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="senderName"
-                      value={formData.senderName}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      placeholder="Dejar vacío para anónimo"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      ¿Quién recibe?
-                    </label>
-                    <input
-                      type="text"
-                      name="recipientName"
-                      value={formData.recipientName}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Mensaje para la tarjeta de dedicatoria
-                    </label>
-                    <textarea
-                      name="dedicationMessage"
-                      value={formData.dedicationMessage}
-                      onChange={(e) => setFormData({...formData, dedicationMessage: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      rows={3}
-                      placeholder="Escribe tu mensaje especial..."
-                    />
-                  </div>
-
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="isAnonymous"
-                      checked={formData.isAnonymous}
-                      onChange={handleInputChange}
-                      className="mr-2"
-                    />
-                    <label className="text-sm text-gray-700">
-                      Envío anónimo
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Datos importantes para realizar su entrega */}
-              <div className="bg-white rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-6">Datos importantes para realizar su entrega</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Número de la persona quien recibe <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      name="recipientPhone"
-                      value={formData.recipientPhone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Domicilio de entrega - calle, número/int y colonia <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      name="deliveryAddress"
-                      value={formData.deliveryAddress}
-                      onChange={handleAddressChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      rows={2}
-                      placeholder="Calle, número, interior, colonia..."
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Casa habitación, local o empresa
-                    </label>
-                    <select
-                      name="addressType"
-                      value={formData.addressType}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                    >
-                      <option value="casa">Casa habitación</option>
-                      <option value="local">Local comercial</option>
-                      <option value="empresa">Empresa</option>
-                    </select>
-                  </div>
-
-                  {formData.addressType !== "casa" && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Área en que se encuentra <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="companyArea"
-                        value={formData.companyArea}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                        placeholder="Ej: Recepción, Oficina 205, Área de ventas..."
-                        required={formData.addressType !== "casa"}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Dirección de envío */}
+              {/* Dirección de Envío */}
               <div className="bg-white rounded-2xl p-6">
                 <div className="flex items-center gap-2 mb-6">
                   <Icon.MapPin className="w-5 h-5 text-gray-600" />
-                  <h2 className="text-lg font-semibold">Dirección de Envío</h2>
+                  <h2 className="text-lg font-semibold">🚚 Dirección de Envío</h2>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Datos del Destinatario */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Dirección
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                    />
+                    <h3 className="text-md font-medium text-gray-800 mb-4 flex items-center">
+                      <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                      Datos del Destinatario
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Teléfono de quien recibe <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          name="recipientPhone"
+                          value={formData.recipientPhone}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          placeholder="Número de contacto para la entrega"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Ciudad
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Código Postal
-                      </label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                        required
-                      />
+                  {/* Dirección Completa */}
+                  <div>
+                    <h3 className="text-md font-medium text-gray-800 mb-4 flex items-center">
+                      <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                      Dirección Completa
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Domicilio completo <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          name="deliveryAddress"
+                          value={formData.deliveryAddress}
+                          onChange={handleAddressChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          rows={2}
+                          placeholder="Calle, número, interior, colonia..."
+                          required
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Ciudad <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Código Postal <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="zipCode"
+                            value={formData.zipCode}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Tipo de domicilio
+                        </label>
+                        <select
+                          name="addressType"
+                          value={formData.addressType}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        >
+                          <option value="casa">🏠 Casa habitación</option>
+                          <option value="local">🏪 Local comercial</option>
+                          <option value="empresa">🏢 Empresa</option>
+                        </select>
+                      </div>
+
+                      {formData.addressType !== "casa" && (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Área específica <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="companyArea"
+                            value={formData.companyArea}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                            placeholder="Ej: Recepción, Oficina 205, Área de ventas..."
+                            required={formData.addressType !== "casa"}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Selección de fecha y horario de entrega */}
+              {/* Fecha y Horario de Entrega */}
               <div className="bg-white rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-6">Fecha y Horario de Entrega</h2>
+                <h2 className="text-lg font-semibold mb-6">📅 Fecha y Horario de Entrega</h2>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Selección de Fecha */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Fecha de Entrega
-                    </label>
-                    <input
-                      type="date"
-                      name="deliveryDate"
-                      value={formData.deliveryDate}
-                      onChange={handleInputChange}
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      required
-                    />
+                    <h3 className="text-md font-medium text-gray-800 mb-4 flex items-center">
+                      <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                      Selecciona la Fecha
+                    </h3>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fecha de entrega <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        name="deliveryDate"
+                        value={formData.deliveryDate}
+                        onChange={handleInputChange}
+                        min={new Date().toISOString().split('T')[0]}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        required
+                      />
+                    </div>
                   </div>
 
+                  {/* Selección de Ruta */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ruta de Entrega
-                    </label>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="deliveryRoute"
-                          value="matutina"
-                          checked={formData.deliveryRoute === "matutina"}
-                          onChange={handleInputChange}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">
-                          <strong>Ruta Matutina:</strong> 9:00 AM a 2:30 PM
-                        </span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="deliveryRoute"
-                          value="vespertina"
-                          checked={formData.deliveryRoute === "vespertina"}
-                          onChange={handleInputChange}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">
-                          <strong>Ruta Vespertina:</strong> 2:30 PM a 6:00 PM
-                          {new Date(formData.deliveryDate).getDay() === 6 && (
-                            <span className="text-red-500 ml-1">(No disponible los sábados)</span>
-                          )}
-                        </span>
-                      </label>
+                    <h3 className="text-md font-medium text-gray-800 mb-4 flex items-center">
+                      <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                      Selecciona la Ruta
+                    </h3>
+                    <div className="space-y-3">
+                      <div className={`border rounded-lg p-4 transition-colors cursor-pointer ${
+                        formData.deliveryRoute === "matutina" 
+                          ? "border-pink-500 bg-pink-50" 
+                          : "border-gray-200 hover:border-pink-300"
+                      }`}>
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="deliveryRoute"
+                            value="matutina"
+                            checked={formData.deliveryRoute === "matutina"}
+                            onChange={handleInputChange}
+                            className="mr-3 text-pink-500"
+                          />
+                          <div>
+                            <div className="font-medium text-gray-900">🌅 Ruta Matutina</div>
+                            <div className="text-sm text-gray-600">9:00 AM - 2:30 PM</div>
+                          </div>
+                        </label>
+                      </div>
+                      
+                      <div className={`border rounded-lg p-4 transition-colors cursor-pointer ${
+                        formData.deliveryRoute === "vespertina" 
+                          ? "border-pink-500 bg-pink-50" 
+                          : "border-gray-200 hover:border-pink-300"
+                      }`}>
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="deliveryRoute"
+                            value="vespertina"
+                            checked={formData.deliveryRoute === "vespertina"}
+                            onChange={handleInputChange}
+                            className="mr-3 text-pink-500"
+                          />
+                          <div>
+                            <div className="font-medium text-gray-900">🌆 Ruta Vespertina</div>
+                            <div className="text-sm text-gray-600">2:30 PM - 6:00 PM</div>
+                            {formData.deliveryDate && new Date(formData.deliveryDate).getDay() === 6 && (
+                              <div className="text-xs text-red-500 mt-1">⚠️ No disponible los sábados</div>
+                            )}
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   </div>
 
                   {/* Información de horarios */}
                   <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-pink-800 mb-2">Información Importante</h3>
+                    <h3 className="text-sm font-semibold text-pink-800 mb-2">ℹ️ Información Importante</h3>
                     <div className="text-xs text-pink-700 space-y-1">
                       <p>• <strong>No manejamos entregas en horarios específicos</strong></p>
                       <p>• <strong>Se entregan en el transcurso del horario de ruta elegido</strong></p>
