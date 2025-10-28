@@ -13,7 +13,29 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export async function POST(request: Request) {
   try {
-    const {  items, customerEmail, customerName } = await request.json();
+    const { 
+      items, 
+      customerEmail, 
+      customerName,
+      customerPhone,
+      deliveryDate,
+      deliveryTimeSlot,
+      customerAddress,
+      customerCity,
+      customerZipCode,
+      senderName,
+      recipientName,
+      dedicationMessage,
+      isAnonymous,
+      recipientPhone,
+      deliveryAddress,
+      addressType,
+      companyArea,
+      deliveryRoute,
+      distance,
+      shippingCost,
+      totalAmount
+    } = await request.json();
 
     // Validar datos
     if (!items || items.length === 0) {
@@ -23,10 +45,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Calcular total
-    const total = items.reduce((sum: number, item: any) => {
+    // Usar el total calculado que incluye envío
+    const subtotal = items.reduce((sum: number, item: any) => {
       return sum + (item.price * item.quantity);
     }, 0);
+    
+    const total = totalAmount || (subtotal + (shippingCost || 0));
 
     // Crear sesión de Stripe Checkout
     const session = await stripe.checkout.sessions.create({
@@ -49,6 +73,22 @@ export async function POST(request: Request) {
       metadata: {
         customer_name: customerName || '',
         customer_email: customerEmail || '',
+        customer_phone: customerPhone || '',
+        delivery_date: deliveryDate || '',
+        delivery_time_slot: deliveryTimeSlot || '',
+        delivery_address: deliveryAddress || '',
+        sender_name: senderName || '',
+        recipient_name: recipientName || '',
+        dedication_message: dedicationMessage || '',
+        is_anonymous: isAnonymous ? 'true' : 'false',
+        recipient_phone: recipientPhone || '',
+        address_type: addressType || '',
+        company_area: companyArea || '',
+        delivery_route: deliveryRoute || '',
+        distance: distance?.toString() || '0',
+        shipping_cost: shippingCost?.toString() || '0',
+        subtotal: subtotal.toString(),
+        total_amount: total.toString(),
       },
     });
 
@@ -58,9 +98,19 @@ export async function POST(request: Request) {
       .insert({
         customer_name: customerName || 'Invitado',
         customer_email: customerEmail || '',
+        customer_phone: customerPhone || null,
         total_amount: total,
         status: 'pending',
-        shipping_address: {},
+        shipping_address: {
+          address: deliveryAddress || customerAddress || '',
+          city: customerCity || '',
+          zipCode: customerZipCode || '',
+          state: '',
+          country: 'México'
+        },
+        delivery_date: deliveryDate || null,
+        delivery_time_slot: deliveryTimeSlot || null,
+        stripe_session_id: session.id,
       })
       .select()
       .single();

@@ -68,7 +68,7 @@ export default function CheckoutPage() {
     if (distance <= 10) {
       return 0; // Gratis hasta 10km
     } else if (distance <= 15) {
-      return 0; // Gratis hasta 15km
+      return 0; // Gratis hasta 15km (corregido según especificaciones)
     } else {
       const extraKm = distance - 15;
       return extraKm * 13; // $13 pesos por km extra después de 15km
@@ -82,7 +82,7 @@ export default function CheckoutPage() {
     
     if (!apiKey) {
       console.warn('Google Maps API key no configurada');
-      return Math.floor(Math.random() * 30) + 5; // Fallback
+      return 12; // Fallback: distancia promedio
     }
     
     try {
@@ -101,14 +101,14 @@ export default function CheckoutPage() {
         console.log(`Distancia calculada: ${distanceKm.toFixed(2)} km`);
         return Math.round(distanceKm);
       } else {
-        console.warn('Error en Google Maps API:', data.status);
-        // Fallback a distancia simulada si hay error
-        return Math.floor(Math.random() * 30) + 5;
+        console.warn('Error en Google Maps API:', data.status, data.error_message);
+        // Fallback a distancia promedio si hay error (billing no habilitado)
+        return 12; // Distancia promedio en Guadalajara
       }
     } catch (error) {
       console.error('Error calculando distancia:', error);
-      // Fallback a distancia simulada si hay error
-      return Math.floor(Math.random() * 30) + 5;
+      // Fallback a distancia promedio si hay error
+      return 12; // Distancia promedio en Guadalajara
     }
   };
 
@@ -224,32 +224,8 @@ export default function CheckoutPage() {
 
       // Redirigir a Stripe Checkout
       if (data.url) {
-        // Enviar mensaje de WhatsApp antes de redirigir
-        sendWhatsAppMessage({
-          items: formattedItems,
-          customerEmail: formData.email,
-          customerName: `${formData.firstName} ${formData.lastName}`,
-          deliveryDate: formData.deliveryDate,
-          deliveryTimeSlot: formData.deliveryTimeSlot,
-          customerPhone: formData.phone,
-          customerAddress: formData.address,
-          customerCity: formData.city,
-          customerZipCode: formData.zipCode,
-          senderName: formData.senderName,
-          recipientName: formData.recipientName,
-          dedicationMessage: formData.dedicationMessage,
-          isAnonymous: formData.isAnonymous,
-          recipientPhone: formData.recipientPhone,
-          deliveryAddress: formData.deliveryAddress,
-          addressType: formData.addressType,
-          companyArea: formData.companyArea,
-          deliveryRoute: formData.deliveryRoute,
-          distance: formData.distance,
-          shippingCost: formData.shippingCost,
-          totalAmount: cartState.total + formData.shippingCost,
-        });
-
         // Redirigir a Stripe Checkout
+        // El WhatsApp se enviará automáticamente cuando el pago sea exitoso via webhook
         window.location.href = data.url;
       } else {
         throw new Error('No se recibió URL de pago');
