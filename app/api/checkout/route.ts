@@ -67,8 +67,8 @@ export async function POST(request: Request) {
         quantity: item.quantity,
       })),
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/checkout`,
+      success_url: `${process.env.NEXT_PUBLIC_URL || 'https://lacasitadelasflores.mx'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL || 'https://lacasitadelasflores.mx'}/checkout`,
       customer_email: customerEmail,
       metadata: {
         customer_name: customerName || '',
