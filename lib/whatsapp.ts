@@ -61,6 +61,10 @@ class WhatsAppService {
       this.initializeClient();
     }
     
+    if (!this.client) {
+      throw new Error('No se pudo inicializar el cliente de WhatsApp');
+    }
+    
     try {
       await this.client.initialize();
       console.log('🚀 Iniciando WhatsApp Web...');
@@ -107,9 +111,13 @@ class WhatsAppService {
 
   async stop() {
     if (this.client) {
-      await this.client.destroy();
-      this.isReady = false;
-      console.log('🛑 WhatsApp detenido');
+      try {
+        await this.client.destroy();
+        this.isReady = false;
+        console.log('🛑 WhatsApp detenido');
+      } catch (error) {
+        console.error('❌ Error deteniendo WhatsApp:', error);
+      }
     }
   }
 }
