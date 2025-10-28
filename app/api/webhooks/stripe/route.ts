@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabase } from '@/lib/supabase';
+import { getWhatsAppService } from '@/lib/whatsapp';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing STRIPE_SECRET_KEY');
@@ -125,14 +126,48 @@ ${order.order_items.map((item: any) => `• ${item.products?.title || 'Producto'
 • Se entregan en el transcurso del horario de ruta elegido
 • Los sábados no aplica ruta vespertina`;
 
-  // En producción, aquí usarías una API de WhatsApp Business
-  // Por ahora, logueamos el mensaje para que puedas copiarlo manualmente
-  console.log('=== MENSAJE DE WHATSAPP ===');
-  console.log(message);
-  console.log('===========================');
-  
-  // En un entorno de producción, aquí enviarías el mensaje automáticamente
-  // usando WhatsApp Business API o un servicio como Twilio
-  
-  return message;
+  try {
+    // Usar nuestro servicio propio de WhatsApp
+    const whatsappService = getWhatsAppService();
+    
+    // Iniciar servicio si no está listo
+    const status = whatsappService.getStatus();
+    if (!status.isReady) {
+      console.log('🚀 Iniciando WhatsApp Web...');
+      await whatsappService.start();
+      
+      // Esperar un poco para que se conecte
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+    
+    // Enviar mensaje usando nuestro servicio
+    const result = await whatsappService.sendMessage(whatsappNumber, message);
+    
+    if (result.success) {
+      console.log('✅ Mensaje de WhatsApp enviado exitosamente');
+      return { success: true, message: 'WhatsApp enviado', messageId: result.messageId };
+    } else {
+      console.error('❌ Error enviando WhatsApp:', result.error);
+      
+      // Fallback: mostrar mensaje en consola y generar URL
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/52${whatsappNumber}?text=${encodedMessage}`;
+      
+      console.log('=== MENSAJE DE WHATSAPP (FALLBACK) ===');
+      console.log(message);
+      console.log('URL para envío manual:', whatsappUrl);
+      console.log('=====================================');
+      
+      return { success: false, message: 'Error enviando WhatsApp', whatsappUrl, error: result.error };
+    }
+  } catch (error: any) {
+    console.error('❌ Error crítico enviando WhatsApp:', error);
+    
+    // Fallback: mostrar mensaje en consola
+    console.log('=== MENSAJE DE WHATSAPP (FALLBACK CRÍTICO) ===');
+    console.log(message);
+    console.log('=============================================');
+    
+    return { success: false, message: 'Error crítico enviando WhatsApp', error: error.message };
+  }
 }
