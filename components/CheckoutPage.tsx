@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import AuthModal from "./AuthModal";
 
 const Icon = {
   ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
@@ -23,10 +24,11 @@ const Icon = {
 
 export default function CheckoutPage() {
   const { state: cartState, dispatch } = useCart();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -168,6 +170,13 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Verificar si el usuario está autenticado
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     setIsProcessing(true);
     setError("");
 
@@ -277,6 +286,18 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
     // Abrir WhatsApp en una nueva ventana
     window.open(whatsappUrl, '_blank');
   };
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Verificando autenticación...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (cartState.items.length === 0) {
     return (
@@ -690,6 +711,21 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
               >
                 {isProcessing ? "Procesando..." : `Pagar ${(cartState.total + formData.shippingCost).toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`}
               </button>
+              
+              {/* Información de autenticación */}
+              {!user && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm">🔐</span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-blue-800">Autenticación Requerida</h3>
+                  </div>
+                  <p className="text-xs text-blue-700">
+                    Debes iniciar sesión para completar tu compra. Es rápido y seguro.
+                  </p>
+                </div>
+              )}
 
               <p className="text-xs text-center text-gray-500">
                 Al continuar, aceptas nuestros términos y condiciones. El pago se procesará de forma segura con Stripe.
@@ -776,6 +812,13 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
           </div>
         </div>
       </div>
+      
+      {/* Modal de Autenticación */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        initialMode="login"
+      />
     </div>
   );
 }

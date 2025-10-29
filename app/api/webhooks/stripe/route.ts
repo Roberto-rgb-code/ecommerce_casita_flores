@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabase } from '@/lib/supabase';
 import { getWhatsAppService } from '@/lib/whatsapp';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing STRIPE_SECRET_KEY');
@@ -69,10 +70,36 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Error updating order' }, { status: 500 });
       }
 
-      // Enviar notificación de WhatsApp
-      await sendWhatsAppNotification(order, session.metadata);
+      // Enviar notificaciones (WhatsApp + Email)
+      const metadata = session.metadata || {};
+      await Promise.all([
+        sendWhatsAppNotification(order, metadata),
+        sendOrderConfirmationEmail({
+          orderId: order.id,
+          customerName: order.customer_name,
+          customerEmail: order.customer_email,
+          customerPhone: order.customer_phone,
+          items: order.order_items.map((item: any) => ({
+            title: item.products?.title || 'Producto',
+            quantity: item.quantity,
+            price: item.price,
+            image_url: item.products?.image_url
+          })),
+          subtotal: parseFloat(metadata.subtotal || '0'),
+          shippingCost: parseFloat(metadata.shipping_cost || '0'),
+          total: parseFloat(metadata.total_amount || order.total_amount),
+          deliveryDate: metadata.delivery_date || '',
+          deliveryRoute: metadata.delivery_route || '',
+          deliveryAddress: metadata.delivery_address || '',
+          recipientName: metadata.recipient_name || '',
+          recipientPhone: metadata.recipient_phone || '',
+          senderName: metadata.sender_name,
+          dedicationMessage: metadata.dedication_message,
+          stripeSessionId: order.stripe_session_id
+        })
+      ]);
 
-      console.log(`Order ${order.id} marked as paid and WhatsApp notification sent`);
+      console.log(`Order ${order.id} marked as paid and notifications sent (WhatsApp + Email)`);
       
       return NextResponse.json({ received: true });
     } catch (error) {
