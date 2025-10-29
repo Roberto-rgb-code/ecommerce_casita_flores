@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
@@ -30,10 +30,10 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    firstName: user?.displayName?.split(' ')[0] || "",
+    lastName: user?.displayName?.split(' ').slice(1).join(' ') || "",
     email: user?.email || "",
-    phone: "",
+    phone: user?.phoneNumber || "",
     city: "",
     zipCode: "",
     deliveryDate: "",
@@ -53,6 +53,19 @@ export default function CheckoutPage() {
     distance: 0,
     shippingCost: 0,
   });
+
+  // Actualizar datos del usuario cuando cambie
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: user.displayName?.split(' ')[0] || "",
+        lastName: user.displayName?.split(' ').slice(1).join(' ') || "",
+        email: user.email || "",
+        phone: user.phoneNumber || "",
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;

@@ -16,7 +16,7 @@ import { auth } from '@/lib/firebase';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string, phone?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
@@ -37,13 +37,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   }, []);
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string, phone?: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
-    // Actualizar perfil con el nombre
+    // Actualizar perfil con el nombre y teléfono
     if (userCredential.user) {
       await updateProfile(userCredential.user, {
-        displayName: name
+        displayName: name,
+        phoneNumber: phone || ''
       });
     }
   };
