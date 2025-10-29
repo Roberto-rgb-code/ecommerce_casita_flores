@@ -14,44 +14,54 @@ type Props = {
 
 const categories = [
   {
-    slug: "amor",
-    title: "Amor / Aniversario",
-    description: "Expresa tu amor con nuestros hermosos arreglos florales",
+    slug: "best-sellers",
+    title: "Best sellers",
+    description: "Nuestros productos más populares y vendidos",
   },
   {
-    slug: "cumpleanos",
-    title: "Cumpleaños",
-    description: "Celebra un año más de vida con flores frescas y coloridas",
+    slug: "ramos-y-bouquets",
+    title: "Ramos y bouquets",
+    description: "Hermosos arreglos florales para cualquier ocasión",
   },
   {
-    slug: "amistad",
-    title: "Amistad",
-    description: "Arreglos florales para celebrar la amistad",
+    slug: "mix-floral",
+    title: "Mix Floral",
+    description: "Combinaciones únicas de flores y colores",
   },
   {
-    slug: "agradecimiento",
-    title: "Agradecimiento",
-    description: "Muestra tu gratitud con flores hermosas",
+    slug: "corazones",
+    title: "Corazones",
+    description: "Arreglos con forma de corazón para expresar amor",
   },
   {
-    slug: "graduacion",
-    title: "Graduación",
-    description: "Celebra este logro tan importante",
+    slug: "baules",
+    title: "Baules",
+    description: "Elegantes baules florales para ocasiones especiales",
   },
   {
-    slug: "condolencias",
-    title: "Condolencias",
-    description: "Arreglos florales para momentos difíciles",
+    slug: "cajas-circulares",
+    title: "Cajas circulares",
+    description: "Arreglos en cajas circulares perfectas para regalar",
   },
   {
-    slug: "nacimiento",
-    title: "Nacimiento",
-    description: "Flores para celebrar la llegada de un bebé",
+    slug: "para-ellos",
+    title: "Para ellos",
+    description: "Arreglos florales especialmente diseñados para hombres",
   },
   {
-    slug: "eventos",
-    title: "Eventos",
-    description: "Flores perfectas para cualquier evento especial",
+    slug: "globos",
+    title: "Globos",
+    description: "Combinaciones de flores y globos para celebrar",
+  },
+  {
+    slug: "peluches",
+    title: "Peluches",
+    description: "Adorables arreglos con peluches y flores",
+  },
+  {
+    slug: "pasteles",
+    title: "Pasteles",
+    description: "Arreglos florales con forma de pastel",
   },
 ];
 

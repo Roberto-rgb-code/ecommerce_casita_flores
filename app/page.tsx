@@ -151,14 +151,16 @@ export default async function Home() {
             {(() => {
               // Categorías sincronizadas con las páginas de categoría
               const categories = [
-                { slug: "amor", title: "Amor / Aniversario" },
-                { slug: "cumpleanos", title: "Cumpleaños" },
-                { slug: "amistad", title: "Amistad" },
-                { slug: "agradecimiento", title: "Agradecimiento" },
-                { slug: "graduacion", title: "Graduación" },
-                { slug: "condolencias", title: "Condolencias" },
-                { slug: "nacimiento", title: "Nacimiento" },
-                { slug: "eventos", title: "Eventos" }
+                { slug: "best-sellers", title: "Best sellers" },
+                { slug: "ramos-y-bouquets", title: "Ramos y bouquets" },
+                { slug: "mix-floral", title: "Mix Floral" },
+                { slug: "corazones", title: "Corazones" },
+                { slug: "baules", title: "Baules" },
+                { slug: "cajas-circulares", title: "Cajas circulares" },
+                { slug: "para-ellos", title: "Para ellos" },
+                { slug: "globos", title: "Globos" },
+                { slug: "peluches", title: "Peluches" },
+                { slug: "pasteles", title: "Pasteles" }
               ];
               
               return categories.map((category, index) => {

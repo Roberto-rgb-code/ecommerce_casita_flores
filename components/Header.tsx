@@ -67,11 +67,16 @@ const Icon = {
 };
 
 const NAV = [
-  { href: "#favoritas", label: "Best Sellers" },
-  { href: "#categorias", label: "Amor" },
-  { href: "#categorias", label: "Cumpleaños" },
-  { href: "#categorias", label: "Aniversario" },
-  { href: "#categorias", label: "Eventos" },
+  { href: "#favoritas", label: "Best sellers" },
+  { href: "#categorias", label: "Ramos y bouquets" },
+  { href: "#categorias", label: "Mix Floral" },
+  { href: "#categorias", label: "Corazones" },
+  { href: "#categorias", label: "Baules" },
+  { href: "#categorias", label: "Cajas circulares" },
+  { href: "#categorias", label: "Para ellos" },
+  { href: "#categorias", label: "Globos" },
+  { href: "#categorias", label: "Peluches" },
+  { href: "#categorias", label: "Pasteles" },
   { href: "#footer", label: "Envíos" },
 ];
 

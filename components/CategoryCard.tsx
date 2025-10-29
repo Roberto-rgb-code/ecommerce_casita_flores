@@ -12,10 +12,16 @@ export default function CategoryCard({
   // Mapear títulos a slugs
   const getSlug = (title: string) => {
     const slugMap: { [key: string]: string } = {
-      "Amor": "/category/amor",
-      "Cumpleaños": "/category/cumpleanos",
-      "Aniversario": "/category/aniversario",
-      "Condolencias": "/category/condolencias",
+      "Best sellers": "/category/best-sellers",
+      "Ramos y bouquets": "/category/ramos-y-bouquets",
+      "Mix Floral": "/category/mix-floral",
+      "Corazones": "/category/corazones",
+      "Baules": "/category/baules",
+      "Cajas circulares": "/category/cajas-circulares",
+      "Para ellos": "/category/para-ellos",
+      "Globos": "/category/globos",
+      "Peluches": "/category/peluches",
+      "Pasteles": "/category/pasteles",
     };
     return slugMap[title] || href;
   };
