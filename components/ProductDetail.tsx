@@ -256,7 +256,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   <div>
                     <h3 className="font-medium text-gray-900">Envío gratis</h3>
                     <p className="text-sm text-gray-500">
-                      En compras mayores a $799 MXN. Entrega el mismo día en CDMX.
+                      En compras mayores a $799 MXN. Entrega el mismo día en zona metropolitana.
                     </p>
                   </div>
                 </div>

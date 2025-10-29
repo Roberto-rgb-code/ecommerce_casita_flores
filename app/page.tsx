@@ -38,8 +38,8 @@ export default async function Home() {
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 mb-8 sm:mb-10 max-w-2xl leading-relaxed">
-                Envía las flores más frescas de la CDMX. Entrega el mismo día en
-                toda la zona metropolitana con nuestro servicio premium.
+                Envía las flores más frescas de la zona metropolitana. Entrega el mismo día
+                en toda la zona metropolitana con nuestro servicio premium.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-12 sm:mb-16">
@@ -80,11 +80,7 @@ export default async function Home() {
             <div className="text-center">
               <p className="text-sm text-[var(--muted)] mb-2">Para entrega en:</p>
               <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-[var(--ink)]">
-                <span>Ciudad de México</span>
-                <span>Estado de México</span>
                 <span>Zona Metropolitana</span>
-                <span>Cuernavaca</span>
-                <span>Puebla</span>
               </div>
             </div>
           </div>

@@ -44,7 +44,7 @@ export default function Footer() {
                 </div>
               </div>
               <p className="footer-tagline">
-                Flores frescas con entrega el mismo día en CDMX y zona metropolitana
+                Flores frescas con entrega el mismo día en zona metropolitana
               </p>
               <div className="footer-socials">
                 <a 
@@ -144,7 +144,6 @@ export default function Footer() {
             <div className="footer-column">
               <h4 className="footer-column-title">Información</h4>
               <ul className="footer-links">
-                <li><a href="#" className="footer-link">Devoluciones y reembolsos</a></li>
                 <li><a href="#" className="footer-link">Métodos de pago</a></li>
                 <li><a href="#" className="footer-link">Cobertura</a></li>
                 <li><a href="#" className="footer-link">Envío y seguimiento</a></li>

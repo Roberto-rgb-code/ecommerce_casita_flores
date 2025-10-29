@@ -552,7 +552,7 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Ciudad <span className="text-red-500">*</span>
+                            Zona Metropolitana <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
