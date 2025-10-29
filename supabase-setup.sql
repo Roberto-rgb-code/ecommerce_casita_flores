@@ -76,12 +76,12 @@ CREATE POLICY "Public can insert order items" ON public.order_items
 
 -- Insertar algunos productos de ejemplo (opcional)
 INSERT INTO public.products (title, description, price, category, image_url, badge, rating, reviews, stock) VALUES
-  ('50 Rosas Rojas Premium', 'Hermoso arreglo de 50 rosas rojas frescas, perfectas para expresar amor y pasión', 1299.00, 'amor', '/50 rosas rojas.jpg', 'Más vendido', 5.0, 128, 10),
-  ('50 Rosas Azules Exclusivas', 'Elegante ramo de 50 rosas azules, únicas y especiales para ocasiones memorables', 1499.00, 'amor', '/50 rosas azules.jpg', 'Exclusivo', 4.9, 87, 5),
-  ('500 Rosas Espectaculares', 'Impresionante arreglo de 500 rosas rojas, el regalo más grandioso', 8999.00, 'amor', '/500 rosas.jpg', 'Premium', 5.0, 45, 3),
-  ('Corazón Jumbo con Rosas y Ferreros', 'Hermosa caja en forma de corazón con rosas y chocolates Ferrero Rocher', 899.00, 'cumpleaños', '/corazon jumbo con rosas y ferreros.jpg', 'Popular', 4.8, 156, 15),
-  ('Corazón Mediano con Rosas', 'Caja corazón mediana con rosas frescas, perfecta para sorprender', 649.00, 'amistad', '/corazón mediano con rosas.jpg', NULL, 4.7, 92, 20),
-  ('Ramo 200 Rosas y Rox', 'Lujoso ramo de 200 rosas combinadas, un regalo inolvidable', 3499.00, 'amor', '/ramo 200 rosas y rox.jpg', 'Premium', 4.9, 63, 8)
+  ('50 Rosas Rojas Premium', 'Hermoso arreglo de 50 rosas rojas frescas, perfectas para expresar amor y pasión', 1299.00, 'best-sellers', '/50 rosas rojas.jpg', 'Más vendido', 5.0, 128, 10),
+  ('50 Rosas Azules Exclusivas', 'Elegante ramo de 50 rosas azules, únicas y especiales para ocasiones memorables', 1499.00, 'best-sellers', '/50 rosas azules.jpg', 'Exclusivo', 4.9, 87, 5),
+  ('500 Rosas Espectaculares', 'Impresionante arreglo de 500 rosas rojas, el regalo más grandioso', 8999.00, 'best-sellers', '/500 rosas.jpg', 'Premium', 5.0, 45, 3),
+  ('Corazón Jumbo con Rosas y Ferreros', 'Hermosa caja en forma de corazón con rosas y chocolates Ferrero Rocher', 899.00, 'corazones', '/corazon jumbo con rosas y ferreros.jpg', 'Popular', 4.8, 156, 15),
+  ('Corazón Mediano con Rosas', 'Caja corazón mediana con rosas frescas, perfecta para sorprender', 649.00, 'corazones', '/corazón mediano con rosas.jpg', NULL, 4.7, 92, 20),
+  ('Ramo 200 Rosas y Rox', 'Lujoso ramo de 200 rosas combinadas, un regalo inolvidable', 3499.00, 'ramos-y-bouquets', '/ramo 200 rosas y rox.jpg', 'Premium', 4.9, 63, 8)
 ON CONFLICT DO NOTHING;
 
 -- ============================================

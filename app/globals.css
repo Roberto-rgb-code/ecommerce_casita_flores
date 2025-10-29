@@ -188,6 +188,59 @@ body {
   @apply w-10;
 }
 
+.nav-link-responsive {
+  @apply px-2 py-1.5 text-xs font-medium text-[var(--ink)]/80 rounded-md
+    transition-all duration-300
+    hover:text-[var(--brand)] hover:bg-[var(--brand-50)]
+    relative whitespace-nowrap;
+}
+
+.nav-link-responsive::after {
+  content: "";
+  @apply absolute bottom-0 left-1/2 w-0 h-0.5 bg-[var(--brand)]
+    transition-all duration-300;
+  transform: translateX(-50%);
+}
+
+.nav-link-responsive:hover::after {
+  @apply w-8;
+}
+
+/* Hide scrollbar for nav */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1600px) {
+  .nav-link-responsive {
+    @apply px-1.5 py-1 text-xs;
+  }
+}
+
+@media (max-width: 1400px) {
+  .nav-link-responsive {
+    @apply px-1 py-1 text-xs;
+  }
+}
+
+@media (max-width: 1200px) {
+  .nav-link-responsive {
+    @apply px-1 py-0.5 text-xs;
+  }
+}
+
+@media (max-width: 1024px) {
+  .nav-desktop {
+    @apply hidden;
+  }
+}
+
 .header-actions {
   @apply flex items-center gap-1.5;
 }

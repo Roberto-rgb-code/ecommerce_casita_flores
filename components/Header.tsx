@@ -164,11 +164,13 @@ export default function Header() {
 
             {/* Nav desktop */}
             <nav className="nav-desktop">
-              {NAV.map(n => (
-                <a key={n.label} href={n.href} className="nav-link-large">
-                  {n.label}
-                </a>
-              ))}
+              <div className="flex flex-wrap justify-center gap-1 max-w-6xl overflow-x-auto scrollbar-hide">
+                {NAV.map(n => (
+                  <a key={n.label} href={n.href} className="nav-link-responsive flex-shrink-0">
+                    {n.label}
+                  </a>
+                ))}
+              </div>
             </nav>
 
             {/* Acciones */}
