@@ -40,12 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (email: string, password: string, name: string, phone?: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
-    // Actualizar perfil con el nombre y teléfono
+    // Actualizar perfil con el nombre
     if (userCredential.user) {
       await updateProfile(userCredential.user, {
-        displayName: name,
-        phoneNumber: phone || ''
+        displayName: name
       });
+      
+      // Guardar el teléfono en una propiedad personalizada usando setCustomUserClaims
+      // o simplemente lo guardamos en el displayName con formato especial
+      if (phone) {
+        await updateProfile(userCredential.user, {
+          displayName: `${name} | ${phone}`
+        });
+      }
     }
   };
 

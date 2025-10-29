@@ -30,10 +30,10 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: user?.displayName?.split(' ')[0] || "",
-    lastName: user?.displayName?.split(' ').slice(1).join(' ') || "",
+    firstName: "",
+    lastName: "",
     email: user?.email || "",
-    phone: user?.phoneNumber || "",
+    phone: "",
     city: "",
     zipCode: "",
     deliveryDate: "",
@@ -57,12 +57,18 @@ export default function CheckoutPage() {
   // Actualizar datos del usuario cuando cambie
   useEffect(() => {
     if (user) {
+      // Extraer nombre y teléfono del displayName
+      const displayName = user.displayName || '';
+      const phoneMatch = displayName.match(/\| (.+)$/);
+      const phone = phoneMatch ? phoneMatch[1] : '';
+      const nameWithoutPhone = displayName.replace(/\| .+$/, '');
+      
       setFormData(prev => ({
         ...prev,
-        firstName: user.displayName?.split(' ')[0] || "",
-        lastName: user.displayName?.split(' ').slice(1).join(' ') || "",
+        firstName: nameWithoutPhone.split(' ')[0] || "",
+        lastName: nameWithoutPhone.split(' ').slice(1).join(' ') || "",
         email: user.email || "",
-        phone: user.phoneNumber || "",
+        phone: phone,
       }));
     }
   }, [user]);
