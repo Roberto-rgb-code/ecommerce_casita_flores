@@ -24,8 +24,7 @@ export async function POST(request: Request) {
         return NextResponse.json({
           success: false,
           message: 'WhatsApp no está listo',
-          status: newStatus,
-          qrCode: newStatus.qrCode
+          status: newStatus
         });
       }
     }
@@ -52,7 +51,8 @@ export async function GET() {
     return NextResponse.json({
       status: status.status,
       isReady: status.isReady,
-      qrCode: status.qrCode
+      isTwilioConfigured: status.isTwilioConfigured,
+      provider: status.provider
     });
   } catch (error: any) {
     return NextResponse.json({
