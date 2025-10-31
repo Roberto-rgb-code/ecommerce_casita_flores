@@ -78,7 +78,23 @@ export async function validateAddressServer(address: string, apiKey: string): Pr
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Error en validación');
+      const errorMessage = errorData.error?.message || 'Error en validación';
+      
+      // Detectar si la API no está habilitada
+      if (errorMessage.includes('not been used') || 
+          errorMessage.includes('is disabled') ||
+          errorMessage.includes('not enabled')) {
+        // Retornar que la dirección es válida pero sin validación estricta
+        // Esto permite que el usuario continúe sin la validación de Google
+        return {
+          isValid: true, // Permitir continuar
+          formattedAddress: address,
+          message: 'Dirección aceptada (validación automática no disponible)',
+          confidence: 'UNCONFIRMED_BUT_PLAUSIBLE'
+        };
+      }
+      
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();

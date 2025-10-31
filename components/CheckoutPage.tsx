@@ -751,8 +751,17 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
                                 <p className={`text-sm font-semibold ${
                                   addressValidation.isValid ? 'text-green-800' : 'text-red-800'
                                 }`}>
-                                  {addressValidation.isValid ? 'Dirección válida' : (addressValidation.message || 'Dirección no válida')}
+                                  {addressValidation.isValid 
+                                    ? (addressValidation.message?.includes('no disponible') 
+                                        ? 'Dirección aceptada' 
+                                        : 'Dirección válida')
+                                    : (addressValidation.message || 'Dirección no válida')}
                                 </p>
+                                {addressValidation.isValid && addressValidation.message?.includes('no disponible') && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    ℹ️ La validación automática no está disponible, pero puedes continuar con tu pedido.
+                                  </p>
+                                )}
                                 {addressValidation.isValid && (
                                   <div className="mt-2 space-y-1">
                                     {formData.shippingCost > 0 && (
