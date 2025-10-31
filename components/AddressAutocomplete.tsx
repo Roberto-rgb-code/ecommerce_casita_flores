@@ -32,6 +32,7 @@ export default function AddressAutocomplete({
   const autocompleteRef = useRef<any>(null);
   const [showTextarea, setShowTextarea] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     // Cargar Google Places API si no está cargada
@@ -67,57 +68,73 @@ export default function AddressAutocomplete({
     }
 
     function initializeAutocomplete() {
-      if (!inputRef.current || !window.google?.maps?.places) {
-        // Reintentar después de un breve delay
-        setTimeout(initializeAutocomplete, 100);
+      // Evitar múltiples inicializaciones
+      if (isInitializedRef.current) {
         return;
       }
 
-      const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
-        types: ["address"],
-        componentRestrictions: { country: "mx" },
-        fields: ["formatted_address", "geometry", "address_components"],
-      });
-
-      autocompleteRef.current = autocomplete;
-
-      // Cuando se selecciona un lugar
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-
-        if (!place.geometry) {
-          console.warn("No se encontró el lugar seleccionado");
-          return;
+      if (!inputRef.current || !window.google?.maps?.places) {
+        // Reintentar después de un breve delay (máximo 5 intentos)
+        if (!inputRef.current) return;
+        const retryCount = (window as any).__autocompleteRetryCount || 0;
+        if (retryCount < 5) {
+          (window as any).__autocompleteRetryCount = retryCount + 1;
+          setTimeout(initializeAutocomplete, 100);
         }
+        return;
+      }
 
-        // Usar la dirección formateada
-        const formattedAddress = place.formatted_address;
-        onChange(formattedAddress);
-        
-        // Cambiar a textarea para permitir edición
-        setShowTextarea(true);
+      // Limpiar autocompletado anterior si existe
+      if (autocompleteRef.current) {
+        window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
+      }
 
-        // Llamar callback si existe
-        if (onPlaceSelect) {
-          onPlaceSelect(place);
-        }
-      });
+      try {
+        const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
+          types: ["address"],
+          componentRestrictions: { country: "mx" },
+          fields: ["formatted_address", "geometry", "address_components"],
+        });
 
-      // Detectar cuando el usuario empieza a escribir manualmente
-      inputRef.current?.addEventListener("input", (e: any) => {
-        const inputValue = e.target.value;
-        if (inputValue.length > 0) {
-          onChange(inputValue);
-        }
-      });
+        autocompleteRef.current = autocomplete;
+        isInitializedRef.current = true;
+
+        // Cuando se selecciona un lugar
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+
+          if (!place.geometry) {
+            console.warn("No se encontró el lugar seleccionado");
+            return;
+          }
+
+          // Usar la dirección formateada
+          const formattedAddress = place.formatted_address;
+          onChange(formattedAddress);
+          
+          // Cambiar a textarea para permitir edición
+          setShowTextarea(true);
+
+          // Llamar callback si existe
+          if (onPlaceSelect) {
+            onPlaceSelect(place);
+          }
+        });
+
+        // El onChange ya está manejado por el input directamente, no necesitamos listener adicional
+      } catch (error) {
+        console.error('Error inicializando autocompletado:', error);
+      }
     }
 
     return () => {
       if (autocompleteRef.current) {
         window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
+        autocompleteRef.current = null;
+        isInitializedRef.current = false;
       }
     };
-  }, [onChange, onPlaceSelect, isLoaded]);
+  }, []); // Solo ejecutar una vez al montar
 
   // Si el usuario ya escribió algo manualmente, mostrar textarea
   useEffect(() => {
@@ -160,26 +177,29 @@ export default function AddressAutocomplete({
 
   return (
     <div className="relative">
-      <input
-        ref={inputRef}
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={className.replace('rows', '') + " min-h-[3rem]"}
-        required={required}
-        autoComplete="off"
-      />
-      <button
-        type="button"
-        onClick={handleToggleToTextarea}
-        className="absolute top-2 right-2 text-xs text-gray-500 hover:text-gray-700 underline"
-      >
-        Escribir manualmente
-      </button>
-      <p className="text-xs text-gray-500 mt-1">
-        💡 Empieza a escribir y selecciona una dirección sugerida
-      </p>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`${className.replace('rows', '')} min-h-[3.5rem] pr-28`}
+          required={required}
+          autoComplete="off"
+        />
+        <button
+          type="button"
+          onClick={handleToggleToTextarea}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-pink-600 hover:text-pink-700 font-medium transition-colors"
+        >
+          Manual
+        </button>
+      </div>
+      <div className="flex items-start gap-2 mt-2 text-xs text-gray-500">
+        <span className="mt-0.5">💡</span>
+        <span>Empieza a escribir y selecciona una dirección sugerida de Google</span>
+      </div>
     </div>
   );
 }

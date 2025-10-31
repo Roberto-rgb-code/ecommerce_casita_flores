@@ -142,15 +142,31 @@ export default function CheckoutPage() {
     }
   };
 
-  // Función para calcular envío cuando cambie la dirección
-  const handleAddressChange = async (address: string) => {
-    setFormData({
-      ...formData,
-      deliveryAddress: address,
-    });
+  // Debounce para evitar múltiples validaciones mientras el usuario escribe
+  const [addressDebounceTimer, setAddressDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-    // Validar dirección usando Google Address Validation API
-    if (address.length > 10) {
+  // Función para calcular envío cuando cambie la dirección (con debounce)
+  const handleAddressChange = async (address: string) => {
+    // Actualizar el valor inmediatamente para que el input responda
+    setFormData(prev => ({
+      ...prev,
+      deliveryAddress: address,
+    }));
+
+    // Limpiar el timer anterior si existe
+    if (addressDebounceTimer) {
+      clearTimeout(addressDebounceTimer);
+    }
+
+    // Si la dirección es muy corta, no validar
+    if (address.length <= 10) {
+      setAddressValidation(null);
+      setIsValidatingAddress(false);
+      return;
+    }
+
+    // Validar solo después de que el usuario deje de escribir por 800ms
+    const timer = setTimeout(async () => {
       setIsValidatingAddress(true);
       try {
         // Validar dirección
@@ -179,10 +195,19 @@ export default function CheckoutPage() {
       } finally {
         setIsValidatingAddress(false);
       }
-    } else {
-      setAddressValidation(null);
-    }
+    }, 800); // Esperar 800ms después de que el usuario deje de escribir
+
+    setAddressDebounceTimer(timer);
   };
+
+  // Limpiar el timer cuando el componente se desmonte
+  useEffect(() => {
+    return () => {
+      if (addressDebounceTimer) {
+        clearTimeout(addressDebounceTimer);
+      }
+    };
+  }, [addressDebounceTimer]);
 
   // Handler para cuando se selecciona una dirección del autocompletado
   const handlePlaceSelect = async (place: any) => {
@@ -693,60 +718,68 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Domicilio completo <span className="text-red-500">*</span>
                         </label>
-                        <AddressAutocomplete
-                          value={formData.deliveryAddress}
-                          onChange={handleAddressChange}
-                          onPlaceSelect={handlePlaceSelect}
-                          placeholder="Calle, número, interior, colonia... (Empieza a escribir para autocompletar)"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                          rows={2}
-                          required
-                        />
-                        {isValidatingAddress && (
-                          <div className="mt-2 p-2 bg-yellow-50 rounded-lg">
-                            <p className="text-sm text-yellow-700">
-                              🔍 Validando dirección...
-                            </p>
-                          </div>
-                        )}
+                        <div className="relative">
+                          <AddressAutocomplete
+                            value={formData.deliveryAddress}
+                            onChange={handleAddressChange}
+                            onPlaceSelect={handlePlaceSelect}
+                            placeholder="Calle, número, interior, colonia..."
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all shadow-sm hover:border-gray-300"
+                            rows={2}
+                            required
+                          />
+                          {isValidatingAddress && (
+                            <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center z-10 border-2 border-pink-200">
+                              <div className="flex items-center gap-3">
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-pink-500"></div>
+                                <span className="text-sm text-gray-700 font-medium">Validando dirección...</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                         {addressValidation && !isValidatingAddress && (
-                          <div className={`mt-2 p-2 rounded-lg ${
+                          <div className={`mt-3 p-3 rounded-xl border-2 ${
                             addressValidation.isValid 
-                              ? 'bg-green-50 border border-green-200' 
-                              : 'bg-red-50 border border-red-200'
+                              ? 'bg-green-50 border-green-200' 
+                              : 'bg-red-50 border-red-200'
                           }`}>
-                            <p className={`text-sm ${
-                              addressValidation.isValid ? 'text-green-700' : 'text-red-700'
-                            }`}>
-                              {addressValidation.isValid ? (
-                                <>
-                                  ✅ <strong>Dirección válida</strong>
-                                  {addressValidation.confidence === 'CONFIRMED' && (
-                                    <span className="ml-2 text-xs">(Confirmada por Google)</span>
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  ⚠️ <strong>{addressValidation.message || 'Dirección no válida'}</strong>
-                                  <span className="block mt-1 text-xs">
-                                    Por favor verifica la dirección o intenta con el autocompletado
-                                  </span>
-                                </>
-                              )}
-                            </p>
+                            <div className="flex items-start gap-3">
+                              <span className="text-xl mt-0.5">
+                                {addressValidation.isValid ? '✅' : '⚠️'}
+                              </span>
+                              <div className="flex-1">
+                                <p className={`text-sm font-semibold ${
+                                  addressValidation.isValid ? 'text-green-800' : 'text-red-800'
+                                }`}>
+                                  {addressValidation.isValid ? 'Dirección válida' : (addressValidation.message || 'Dirección no válida')}
+                                </p>
+                                {addressValidation.isValid && (
+                                  <div className="mt-2 space-y-1">
+                                    {formData.shippingCost > 0 && (
+                                      <p className="text-xs text-green-700">
+                                        💰 Costo de envío: ${formData.shippingCost.toLocaleString('es-MX')}
+                                      </p>
+                                    )}
+                                    {formData.shippingCost === 0 && (
+                                      <p className="text-xs text-green-700">
+                                        🎉 Envío gratis (dentro de 15 km)
+                                      </p>
+                                    )}
+                                    {addressValidation.confidence === 'CONFIRMED' && (
+                                      <p className="text-xs text-green-600">
+                                        ✓ Confirmada por Google
+                                      </p>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
-                        {formData.distance > 0 && addressValidation?.isValid && (
-                          <div className="mt-2 p-2 bg-blue-50 rounded-lg">
-                            <p className="text-sm text-gray-700">
-                              📏 Distancia: <strong>{formData.distance} km</strong>
-                              {formData.shippingCost > 0 ? (
-                                <span className="ml-2">
-                                  | 💰 Costo de envío: <strong>${formData.shippingCost} MXN</strong>
-                                </span>
-                              ) : (
-                                <span className="ml-2 text-green-600">| ✅ Envío gratis</span>
-                              )}
+                        {!addressValidation && !isValidatingAddress && formData.deliveryAddress.length > 10 && (
+                          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p className="text-xs text-yellow-700">
+                              ⏳ Esperando validación...
                             </p>
                           </div>
                         )}
