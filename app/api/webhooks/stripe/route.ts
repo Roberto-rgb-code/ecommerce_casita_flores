@@ -150,8 +150,7 @@ ${order.order_items.map((item: any) => `• ${item.products?.title || 'Producto'
 • El pedido está PAGADO y listo para preparar
 • El pedido debe quedar liquidado para poder salir a ruta
 • No manejamos entregas en horarios específicos
-• Se entregan en el transcurso del horario de ruta elegido
-• Los sábados no aplica ruta vespertina`;
+• Se entregan en el transcurso del horario de ruta elegido`;
 
   try {
     // Usar nuestro servicio propio de WhatsApp

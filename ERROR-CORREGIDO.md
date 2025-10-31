@@ -92,3 +92,4 @@ useEffect(() => {
 
 **¡El sistema ahora funciona correctamente sin errores de TypeScript!** 🚀
 
+

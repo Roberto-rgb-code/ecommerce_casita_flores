@@ -61,7 +61,7 @@ export default async function Home() {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-2xl">🌸</span>
-                  <span className="text-white/80">Flores premium</span>
+                  <span className="text-white/80">Flores Frescas</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-2xl">💝</span>
@@ -78,7 +78,7 @@ export default async function Home() {
         <div className="container-max">
           <div className="py-6">
             <div className="text-center">
-              <p className="text-sm text-[var(--muted)] mb-2">Para entrega en:</p>
+              <p className="text-sm text-[var(--muted)] mb-2">Contamos con entregas el mismo dia en: </p>
               <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-[var(--ink)]">
                 <span>Zona Metropolitana</span>
               </div>
@@ -209,7 +209,7 @@ export default async function Home() {
                   <div className="text-4xl flex-shrink-0">👨‍🎨</div>
                   <div>
                     <h3 className="text-lg font-semibold mb-1">Floristas expertos</h3>
-                    <p className="text-[var(--muted)]">Más de 15 años creando momentos inolvidables</p>
+                    <p className="text-[var(--muted)]">Más de 7 años creando momentos inolvidables</p>
                   </div>
                 </div>
                 <div className="flex gap-4">

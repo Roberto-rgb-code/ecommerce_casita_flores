@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 const MESSAGES = [
-  "🌸 Envío GRATIS en compras mayores a $799 MXN",
+  "🌸 Envío por toda la zona metropolitana",
   "⏱️ Entrega el mismo día - Pide antes de las 2pm",
 ];
 

@@ -189,8 +189,8 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             {/* Información especial */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">
-                El 14 de febrero y el 10 de mayo el horario de entrega es abierto, 
-                si necesitas una entrega especial llámanos al 800 000 0000.
+              En San Valentin y Día de las Madres, debido a el alta demanda de ambas fechas, no manejamos entregas con horario especial. 
+              La ruta comienza a las 9am y termina a las 6pm.
               </p>
             </div>
 
