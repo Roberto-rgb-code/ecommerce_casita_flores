@@ -113,10 +113,14 @@ export async function POST(request: Request) {
 
 // Función para enviar notificación de WhatsApp
 async function sendWhatsAppNotification(order: any, metadata: any) {
-  const whatsappNumber = "3322807617";
+  // Número del negocio para recibir notificaciones de pedidos
+  const businessNumber = process.env.TWILIO_WHATSAPP_TO || "3322807617";
   
-  // Construir mensaje con todos los datos
-  const message = `🌹 *NUEVO PEDIDO PAGADO - LA CASITA DE LAS FLORES* 🌹
+  // Número del comprador para enviar confirmación
+  const customerPhone = order.customer_phone;
+  
+  // Mensaje para el NEGOCIO (notificación de nuevo pedido)
+  const businessMessage = `🌹 *NUEVO PEDIDO PAGADO - LA CASITA DE LAS FLORES* 🌹
 
 *Datos del Cliente:*
 👤 Nombre: ${order.customer_name}
@@ -152,47 +156,109 @@ ${order.order_items.map((item: any) => `• ${item.products?.title || 'Producto'
 • No manejamos entregas en horarios específicos
 • Se entregan en el transcurso del horario de ruta elegido`;
 
+  // Mensaje para el COMPRADOR (confirmación de compra)
+  const customerMessage = `🌹 *¡GRACIAS POR TU COMPRA! - LA CASITA DE LAS FLORES* 🌹
+
+Hola ${order.customer_name.split(' ')[0]},
+
+✅ *Tu pedido ha sido confirmado y el pago fue exitoso*
+
+*Detalles de tu pedido:*
+${order.order_items.map((item: any) => `• ${item.products?.title || 'Producto'} x${item.quantity} - $${item.price * item.quantity}`).join('\n')}
+
+💰 Subtotal: $${metadata.subtotal || '0'}
+🚚 Envío: ${metadata.shipping_cost === '0' ? 'Gratis' : `$${metadata.shipping_cost}`}
+💰 *TOTAL PAGADO: $${metadata.total_amount || order.total_amount}*
+
+*Información de entrega:*
+📅 Fecha: ${metadata.delivery_date || 'Por confirmar'}
+🚚 Horario: ${metadata.delivery_route === 'matutina' ? 'Matutina (9am-2:30pm)' : 'Vespertina (2:30pm-6pm)'}
+🏠 Dirección: ${metadata.delivery_address || 'Por confirmar'}
+
+*ID de pedido:* ${order.id}
+*ID de sesión Stripe:* ${order.stripe_session_id}
+
+Nos pondremos en contacto contigo si necesitamos más información.
+¡Gracias por confiar en nosotros! 💐`;
+
   try {
-    // Usar nuestro servicio propio de WhatsApp
+    // Usar servicio de Twilio
     const whatsappService = getWhatsAppService();
     
-    // Iniciar servicio si no está listo
-    const status = whatsappService.getStatus();
-    if (!status.isReady) {
-      console.log('🚀 Iniciando WhatsApp Web...');
-      await whatsappService.start();
+    // Enviar mensaje al NEGOCIO (notificación)
+    const businessResult = await whatsappService.sendMessage(businessNumber.replace('whatsapp:', '').replace('+52', ''), businessMessage);
+    
+    // Enviar mensaje al COMPRADOR (confirmación) si tiene teléfono
+    let customerResult = null;
+    if (customerPhone) {
+      // Limpiar y formatear teléfono del cliente para Twilio
+      // Remover espacios, guiones, paréntesis
+      let cleanCustomerPhone = customerPhone.replace(/[^\d+]/g, '');
       
-      // Esperar un poco para que se conecte
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Si no tiene código de país, agregar +52 (México)
+      if (!cleanCustomerPhone.startsWith('+')) {
+        // Si empieza con 52, agregar +
+        if (cleanCustomerPhone.startsWith('52')) {
+          cleanCustomerPhone = '+' + cleanCustomerPhone;
+        } else {
+          // Si no tiene código de país, agregar +52
+          cleanCustomerPhone = '+52' + cleanCustomerPhone;
+        }
+      }
+      
+      // Remover el prefijo 'whatsapp:' si existe
+      cleanCustomerPhone = cleanCustomerPhone.replace(/^whatsapp:/, '');
+      
+      customerResult = await whatsappService.sendMessage(cleanCustomerPhone, customerMessage);
     }
     
-    // Enviar mensaje usando nuestro servicio
-    const result = await whatsappService.sendMessage(whatsappNumber, message);
-    
-    if (result.success) {
-      console.log('✅ Mensaje de WhatsApp enviado exitosamente');
-      return { success: true, message: 'WhatsApp enviado', messageId: result.messageId };
+    // Verificar resultados
+    if (businessResult.success) {
+      console.log('✅ Mensaje de WhatsApp enviado al NEGOCIO via Twilio');
+      console.log('   Message SID:', businessResult.messageId);
+      
+      if (customerResult?.success) {
+        console.log('✅ Mensaje de WhatsApp enviado al COMPRADOR via Twilio');
+        console.log('   Message SID:', customerResult.messageId);
+      } else if (customerPhone && customerResult) {
+        console.log('⚠️ No se pudo enviar mensaje al comprador:', customerResult.error);
+      }
+      
+      return { 
+        success: true, 
+        message: 'WhatsApp enviado via Twilio', 
+        businessMessageId: businessResult.messageId,
+        customerMessageId: customerResult?.messageId || null
+      };
     } else {
-      console.error('❌ Error enviando WhatsApp:', result.error);
+      console.error('❌ Error enviando WhatsApp al negocio:', businessResult.error);
+      console.log('=== MENSAJE DE WHATSAPP NEGOCIO (FALLBACK) ===');
+      console.log(businessMessage);
+      if (businessResult.whatsappUrl) {
+        console.log('URL para envío manual:', businessResult.whatsappUrl);
+      }
+      console.log('==============================================');
       
-      // Fallback: mostrar mensaje en consola y generar URL
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/52${whatsappNumber}?text=${encodedMessage}`;
-      
-      console.log('=== MENSAJE DE WHATSAPP (FALLBACK) ===');
-      console.log(message);
-      console.log('URL para envío manual:', whatsappUrl);
-      console.log('=====================================');
-      
-      return { success: false, message: 'Error enviando WhatsApp', whatsappUrl, error: result.error };
+      return { 
+        success: false, 
+        message: 'Error enviando WhatsApp', 
+        whatsappUrl: businessResult.whatsappUrl, 
+        error: businessResult.error 
+      };
     }
   } catch (error: any) {
     console.error('❌ Error crítico enviando WhatsApp:', error);
     
-    // Fallback: mostrar mensaje en consola
-    console.log('=== MENSAJE DE WHATSAPP (FALLBACK CRÍTICO) ===');
-    console.log(message);
-    console.log('=============================================');
+    // Fallback: mostrar mensajes en consola
+    console.log('=== MENSAJE DE WHATSAPP NEGOCIO (FALLBACK CRÍTICO) ===');
+    console.log(businessMessage);
+    console.log('====================================================');
+    
+    if (customerPhone) {
+      console.log('=== MENSAJE DE WHATSAPP COMPRADOR (FALLBACK CRÍTICO) ===');
+      console.log(customerMessage);
+      console.log('=======================================================');
+    }
     
     return { success: false, message: 'Error crítico enviando WhatsApp', error: error.message };
   }

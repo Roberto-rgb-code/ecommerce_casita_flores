@@ -1,124 +1,150 @@
-import { Client, LocalAuth } from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
+import twilio from 'twilio';
 
 class WhatsAppService {
-  private client: Client | null = null;
-  private isReady = false;
-  private qrCode: string | null = null;
+  private twilioClient: twilio.Twilio | null = null;
+  private isInitialized = false;
 
   constructor() {
-    this.initializeClient();
+    this.initializeTwilio();
   }
 
-  private initializeClient() {
-    this.client = new Client({
-      authStrategy: new LocalAuth({
-        clientId: "casita-flores-whatsapp"
-      }),
-      puppeteer: {
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--single-process',
-          '--disable-gpu'
-        ]
-      }
-    });
+  private initializeTwilio() {
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-    this.client.on('qr', (qr) => {
-      console.log('📱 Escanea este código QR con WhatsApp:');
-      qrcode.generate(qr, { small: true });
-      this.qrCode = qr;
-    });
-
-    this.client.on('ready', () => {
-      console.log('✅ WhatsApp está listo!');
-      this.isReady = true;
-      this.qrCode = null;
-    });
-
-    this.client.on('authenticated', () => {
-      console.log('✅ WhatsApp autenticado correctamente');
-    });
-
-    this.client.on('auth_failure', (msg) => {
-      console.error('❌ Error de autenticación:', msg);
-    });
-
-    this.client.on('disconnected', (reason) => {
-      console.log('⚠️ WhatsApp desconectado:', reason);
-      this.isReady = false;
-    });
-  }
-
-  async start() {
-    if (!this.client) {
-      this.initializeClient();
+    if (!accountSid || !authToken) {
+      console.warn('⚠️ Twilio no configurado: Faltan TWILIO_ACCOUNT_SID o TWILIO_AUTH_TOKEN');
+      return;
     }
-    
-    if (!this.client) {
-      throw new Error('No se pudo inicializar el cliente de WhatsApp');
-    }
-    
+
     try {
-      await this.client.initialize();
-      console.log('🚀 Iniciando WhatsApp Web...');
+      this.twilioClient = twilio(accountSid, authToken);
+      this.isInitialized = true;
+      console.log('✅ Twilio inicializado correctamente');
     } catch (error) {
-      console.error('❌ Error iniciando WhatsApp:', error);
+      console.error('❌ Error inicializando Twilio:', error);
     }
   }
 
   async sendMessage(to: string, message: string) {
-    if (!this.isReady || !this.client) {
-      throw new Error('WhatsApp no está listo. Estado: ' + (this.isReady ? 'Listo' : 'No listo'));
+    // Verificar si Twilio está configurado
+    if (!this.isInitialized || !this.twilioClient) {
+      const whatsappFrom = process.env.TWILIO_WHATSAPP_FROM;
+      const whatsappTo = process.env.TWILIO_WHATSAPP_TO || `whatsapp:+52${to}`;
+
+      console.warn('⚠️ Twilio no configurado. Usando fallback (URL de WhatsApp Web)');
+      
+      // Fallback: Generar URL de WhatsApp Web
+      const encodedMessage = encodeURIComponent(message);
+      const phoneNumber = whatsappTo.replace('whatsapp:', '').replace('+', '');
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      
+      console.log('=== MENSAJE DE WHATSAPP (FALLBACK) ===');
+      console.log(message);
+      console.log('URL para envío manual:', whatsappUrl);
+      console.log('=====================================');
+
+      return {
+        success: false,
+        message: 'Twilio no configurado',
+        whatsappUrl,
+        error: 'Twilio no está configurado. Usa las variables de entorno.'
+      };
     }
 
     try {
-      // Formatear número (agregar código de país si no lo tiene)
-      const formattedNumber = to.startsWith('+') ? to : `+52${to}`;
+      const from = process.env.TWILIO_WHATSAPP_FROM;
+
+      if (!from) {
+        throw new Error('TWILIO_WHATSAPP_FROM no está configurado');
+      }
+
+      // Formatear número para Twilio
+      // El parámetro 'to' puede venir como: "3322807617", "+523322807617", "whatsapp:+523322807617"
+      let formattedTo = to;
       
-      // Enviar mensaje
-      const result = await this.client.sendMessage(formattedNumber, message);
+      // Remover prefijo 'whatsapp:' si existe
+      if (formattedTo.startsWith('whatsapp:')) {
+        formattedTo = formattedTo.replace('whatsapp:', '');
+      }
       
-      console.log('✅ Mensaje enviado exitosamente:', result.id._serialized);
+      // Si ya tiene formato correcto (empieza con +), usar tal cual
+      // Si no tiene +, verificar si tiene código de país y agregar +
+      if (!formattedTo.startsWith('+')) {
+        // Si empieza con 52, agregar +
+        if (formattedTo.startsWith('52')) {
+          formattedTo = '+' + formattedTo;
+        } else {
+          // Asumir México (+52) si no tiene código de país
+          formattedTo = '+52' + formattedTo.replace(/[^\d]/g, '');
+        }
+      }
+      
+      // Agregar prefijo 'whatsapp:' que requiere Twilio
+      formattedTo = `whatsapp:${formattedTo}`;
+
+      // Enviar mensaje vía Twilio
+      const result = await this.twilioClient.messages.create({
+        from: from,
+        to: formattedTo,
+        body: message
+      });
+
+      console.log('✅ Mensaje de WhatsApp enviado exitosamente via Twilio');
+      console.log('   Message SID:', result.sid);
+      console.log('   Status:', result.status);
+
       return {
         success: true,
-        messageId: result.id._serialized,
-        message: 'Mensaje enviado correctamente'
+        messageId: result.sid,
+        status: result.status,
+        message: 'Mensaje enviado correctamente via Twilio'
       };
     } catch (error: any) {
-      console.error('❌ Error enviando mensaje:', error);
+      console.error('❌ Error enviando mensaje vía Twilio:', error);
+      
+      // Fallback en caso de error
+      const whatsappTo = process.env.TWILIO_WHATSAPP_TO || `whatsapp:+52${to}`;
+      const encodedMessage = encodeURIComponent(message);
+      const phoneNumber = whatsappTo.replace('whatsapp:', '').replace('+', '');
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+      console.log('=== MENSAJE DE WHATSAPP (FALLBACK POR ERROR) ===');
+      console.log(message);
+      console.log('URL para envío manual:', whatsappUrl);
+      console.log('Error:', error.message);
+      console.log('==============================================');
+
       return {
         success: false,
-        error: error.message,
-        message: 'Error enviando mensaje'
+        message: 'Error enviando mensaje',
+        whatsappUrl,
+        error: error.message
       };
     }
   }
 
   getStatus() {
     return {
-      isReady: this.isReady,
-      qrCode: this.qrCode,
-      status: this.isReady ? 'Conectado' : this.qrCode ? 'Esperando QR' : 'Desconectado'
+      isReady: this.isInitialized,
+      isTwilioConfigured: !!process.env.TWILIO_ACCOUNT_SID && !!process.env.TWILIO_AUTH_TOKEN,
+      status: this.isInitialized 
+        ? 'Twilio conectado' 
+        : (process.env.TWILIO_ACCOUNT_SID ? 'Error de configuración' : 'No configurado'),
+      provider: 'Twilio'
     };
   }
 
+  // Método para compatibilidad (no necesario con Twilio pero mantenido por compatibilidad)
+  async start() {
+    this.initializeTwilio();
+    return { success: true, message: 'Twilio inicializado' };
+  }
+
   async stop() {
-    if (this.client) {
-      try {
-        await this.client.destroy();
-        this.isReady = false;
-        console.log('🛑 WhatsApp detenido');
-      } catch (error) {
-        console.error('❌ Error deteniendo WhatsApp:', error);
-      }
-    }
+    // Twilio no requiere detención, pero mantenemos el método por compatibilidad
+    console.log('ℹ️ Twilio no requiere detención');
+    return { success: true };
   }
 }
 

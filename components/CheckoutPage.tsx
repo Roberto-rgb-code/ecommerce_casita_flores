@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import AuthModal from "./AuthModal";
+import AddressAutocomplete from "./AddressAutocomplete";
+import { validateAddress, AddressValidationResult } from "@/lib/addressValidation";
 
 const Icon = {
   ArrowLeft: (p: React.SVGProps<SVGSVGElement>) => (
@@ -29,6 +31,8 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [addressValidation, setAddressValidation] = useState<AddressValidationResult | null>(null);
+  const [isValidatingAddress, setIsValidatingAddress] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -84,14 +88,14 @@ export default function CheckoutPage() {
   };
 
   // Función para calcular el costo de envío
+  // Gratis hasta 15km, luego $13 pesos por cada km adicional
   const calculateShippingCost = (distance: number) => {
-    if (distance <= 10) {
-      return 0; // Gratis hasta 10km
-    } else if (distance <= 15) {
-      return 0; // Gratis hasta 15km (corregido según especificaciones)
+    if (distance <= 15) {
+      return 0; // Gratis hasta 15km
     } else {
       const extraKm = distance - 15;
-      return extraKm * 13; // $13 pesos por km extra después de 15km
+      const cost = extraKm * 13; // $13 pesos por km extra después de 15km
+      return cost;
     }
   };
 
@@ -133,25 +137,99 @@ export default function CheckoutPage() {
   };
 
   // Función para calcular envío cuando cambie la dirección
-  const handleAddressChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const address = e.target.value;
+  const handleAddressChange = async (address: string) => {
     setFormData({
       ...formData,
       deliveryAddress: address,
     });
 
-    // Calcular distancia si hay una dirección válida
+    // Validar dirección usando Google Address Validation API
     if (address.length > 10) {
+      setIsValidatingAddress(true);
       try {
-        const distance = await calculateDistance(address);
-        const shippingCost = calculateShippingCost(distance);
-        setFormData(prev => ({
-          ...prev,
-          distance,
-          shippingCost,
-        }));
+        // Validar dirección
+        const validation = await validateAddress(address);
+        setAddressValidation(validation);
+
+        // Si la dirección es válida, calcular distancia
+        if (validation.isValid) {
+          const distance = await calculateDistance(validation.formattedAddress || address);
+          const shippingCost = calculateShippingCost(distance);
+          setFormData(prev => ({
+            ...prev,
+            distance,
+            shippingCost,
+            deliveryAddress: validation.formattedAddress || address,
+            // Auto-llenar ciudad y código postal si están disponibles
+            city: validation.addressComponents?.city || prev.city,
+            zipCode: validation.addressComponents?.zipCode || prev.zipCode,
+          }));
+          console.log(`📍 Dirección válida - Distancia: ${distance} km, Costo: $${shippingCost}`);
+        } else {
+          console.warn('⚠️ Dirección no válida:', validation.message);
+        }
       } catch (error) {
-        console.error('Error calculating distance:', error);
+        console.error('Error validando dirección:', error);
+      } finally {
+        setIsValidatingAddress(false);
+      }
+    } else {
+      setAddressValidation(null);
+    }
+  };
+
+  // Handler para cuando se selecciona una dirección del autocompletado
+  const handlePlaceSelect = async (place: any) => {
+    if (place.formatted_address) {
+      const address = place.formatted_address;
+      
+      // Validar dirección usando Address Validation API
+      setIsValidatingAddress(true);
+      try {
+        const validation = await validateAddress(address);
+        setAddressValidation(validation);
+
+        if (validation.isValid) {
+          // Extraer ciudad y código postal
+          let city = validation.addressComponents?.city || formData.city;
+          let zipCode = validation.addressComponents?.zipCode || formData.zipCode;
+          
+          // Si no vienen de la validación, intentar extraer de place
+          if (!city || !zipCode) {
+            place.address_components?.forEach((component: any) => {
+              if (component.types.includes('locality') || component.types.includes('administrative_area_level_2')) {
+                city = component.long_name;
+              }
+              if (component.types.includes('postal_code')) {
+                zipCode = component.long_name;
+              }
+            });
+          }
+
+          setFormData(prev => ({
+            ...prev,
+            deliveryAddress: validation.formattedAddress || address,
+            city: city || prev.city,
+            zipCode: zipCode || prev.zipCode,
+          }));
+
+          // Calcular distancia automáticamente
+          const distance = await calculateDistance(validation.formattedAddress || address);
+          const shippingCost = calculateShippingCost(distance);
+          setFormData(prev => ({
+            ...prev,
+            distance,
+            shippingCost,
+          }));
+          console.log(`✅ Dirección verificada y válida: ${validation.formattedAddress || address}`);
+          console.log(`📏 Distancia: ${distance} km, Costo de envío: $${shippingCost}`);
+        } else {
+          console.warn('⚠️ La dirección seleccionada no es completamente válida:', validation.message);
+        }
+      } catch (error) {
+        console.error('Error validando dirección:', error);
+      } finally {
+        setIsValidatingAddress(false);
       }
     }
   };
@@ -193,6 +271,31 @@ export default function CheckoutPage() {
     // Verificar si el usuario está autenticado
     if (!user) {
       setShowAuthModal(true);
+      return;
+    }
+
+    // Validar que la dirección sea válida antes de proceder
+    if (!addressValidation?.isValid && formData.deliveryAddress.length > 10) {
+      // Si hay una dirección pero no está validada, intentar validarla ahora
+      setIsValidatingAddress(true);
+      try {
+        const validation = await validateAddress(formData.deliveryAddress);
+        setAddressValidation(validation);
+        
+        if (!validation.isValid) {
+          setError("Por favor verifica que la dirección sea correcta. Usa el autocompletado para seleccionar una dirección válida.");
+          setIsValidatingAddress(false);
+          return;
+        }
+      } catch (error) {
+        setError("Error al validar la dirección. Por favor intenta de nuevo.");
+        setIsValidatingAddress(false);
+        return;
+      } finally {
+        setIsValidatingAddress(false);
+      }
+    } else if (formData.deliveryAddress.length <= 10) {
+      setError("Por favor ingresa una dirección completa y válida.");
       return;
     }
     
@@ -538,15 +641,63 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Domicilio completo <span className="text-red-500">*</span>
                         </label>
-                        <textarea
-                          name="deliveryAddress"
+                        <AddressAutocomplete
                           value={formData.deliveryAddress}
                           onChange={handleAddressChange}
+                          onPlaceSelect={handlePlaceSelect}
+                          placeholder="Calle, número, interior, colonia... (Empieza a escribir para autocompletar)"
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                           rows={2}
-                          placeholder="Calle, número, interior, colonia..."
                           required
                         />
+                        {isValidatingAddress && (
+                          <div className="mt-2 p-2 bg-yellow-50 rounded-lg">
+                            <p className="text-sm text-yellow-700">
+                              🔍 Validando dirección...
+                            </p>
+                          </div>
+                        )}
+                        {addressValidation && !isValidatingAddress && (
+                          <div className={`mt-2 p-2 rounded-lg ${
+                            addressValidation.isValid 
+                              ? 'bg-green-50 border border-green-200' 
+                              : 'bg-red-50 border border-red-200'
+                          }`}>
+                            <p className={`text-sm ${
+                              addressValidation.isValid ? 'text-green-700' : 'text-red-700'
+                            }`}>
+                              {addressValidation.isValid ? (
+                                <>
+                                  ✅ <strong>Dirección válida</strong>
+                                  {addressValidation.confidence === 'CONFIRMED' && (
+                                    <span className="ml-2 text-xs">(Confirmada por Google)</span>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  ⚠️ <strong>{addressValidation.message || 'Dirección no válida'}</strong>
+                                  <span className="block mt-1 text-xs">
+                                    Por favor verifica la dirección o intenta con el autocompletado
+                                  </span>
+                                </>
+                              )}
+                            </p>
+                          </div>
+                        )}
+                        {formData.distance > 0 && addressValidation?.isValid && (
+                          <div className="mt-2 p-2 bg-blue-50 rounded-lg">
+                            <p className="text-sm text-gray-700">
+                              📏 Distancia: <strong>{formData.distance} km</strong>
+                              {formData.shippingCost > 0 ? (
+                                <span className="ml-2">
+                                  | 💰 Costo de envío: <strong>${formData.shippingCost} MXN</strong>
+                                </span>
+                              ) : (
+                                <span className="ml-2 text-green-600">| ✅ Envío gratis</span>
+                              )}
+                            </p>
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
@@ -725,10 +876,10 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
               {/* Botón de pago */}
               <button
                 type="submit"
-                disabled={isProcessing}
+                disabled={isProcessing || isValidatingAddress || (formData.deliveryAddress.length > 10 && !addressValidation?.isValid)}
                 className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isProcessing ? "Procesando..." : `Pagar ${(cartState.total + formData.shippingCost).toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`}
+                {isProcessing ? "Procesando..." : isValidatingAddress ? "Validando dirección..." : `Pagar ${(cartState.total + formData.shippingCost).toLocaleString("es-MX", { style: "currency", currency: "MXN" })}`}
               </button>
               
               {/* Información de autenticación */}
