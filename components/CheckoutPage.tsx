@@ -63,16 +63,22 @@ export default function CheckoutPage() {
     if (user) {
       // Extraer nombre y teléfono del displayName
       const displayName = user.displayName || '';
-      const phoneMatch = displayName.match(/\| (.+)$/);
-      const phone = phoneMatch ? phoneMatch[1] : '';
-      const nameWithoutPhone = displayName.replace(/\| .+$/, '');
+      // El formato es: "nombre | teléfono" o solo "nombre"
+      const phoneMatch = displayName.match(/\|\s*(.+)$/);
+      const phone = phoneMatch ? phoneMatch[1].trim() : '';
+      const nameWithoutPhone = displayName.replace(/\s*\|\s*.+$/, '').trim();
+      
+      // Separar nombre en firstName y lastName
+      const nameParts = nameWithoutPhone.split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(' ') || "";
       
       setFormData(prev => ({
         ...prev,
-        firstName: nameWithoutPhone.split(' ')[0] || "",
-        lastName: nameWithoutPhone.split(' ').slice(1).join(' ') || "",
+        firstName: firstName,
+        lastName: lastName,
         email: user.email || "",
-        phone: phone,
+        phone: phone || prev.phone, // Mantener teléfono previo si no hay uno nuevo
       }));
     }
   }, [user]);
@@ -416,6 +422,52 @@ ${orderData.items.map((item: any) => `• ${item.title} x${item.quantity} - $${i
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Verificando autenticación...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Protección: Mostrar modal de autenticación si no está autenticado
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setShowAuthModal(true);
+    } else if (user) {
+      // Si el usuario se autentica, cerrar el modal automáticamente
+      setShowAuthModal(false);
+    }
+  }, [authLoading, user]);
+
+  // No permitir acceso al checkout si no está autenticado
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">🔐</span>
+          </div>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-4">
+            Inicia sesión para continuar
+          </h1>
+          <p className="text-gray-600 mb-8">
+            Necesitas estar registrado para realizar una compra
+          </p>
+          <AuthModal 
+            isOpen={showAuthModal} 
+            onClose={() => {
+              setShowAuthModal(false);
+              // Si el usuario cierra el modal sin autenticarse, redirigir a home
+              if (!user) {
+                router.push('/');
+              }
+            }} 
+            initialMode="login"
+          />
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="btn btn-large mx-auto"
+          >
+            Iniciar sesión
+          </button>
         </div>
       </div>
     );

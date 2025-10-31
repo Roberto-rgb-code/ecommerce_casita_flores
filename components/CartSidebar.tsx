@@ -1,8 +1,12 @@
 "use client";
 
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import AuthModal from "./AuthModal";
 
 const Icon = {
   Close: (p: React.SVGProps<SVGSVGElement>) => (
@@ -29,6 +33,23 @@ const Icon = {
 
 export default function CartSidebar() {
   const { state, dispatch } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleCheckout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Verificar si el usuario está autenticado
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    // Si está autenticado, cerrar carrito y navegar al checkout
+    dispatch({ type: "CLOSE_CART" });
+    router.push("/checkout");
+  };
 
   if (!state.isOpen) return null;
 
@@ -162,13 +183,12 @@ export default function CartSidebar() {
             </div>
             
             <div className="space-y-2">
-              <Link 
-                href="/checkout" 
+              <button 
+                onClick={handleCheckout}
                 className="w-full btn btn-large block text-center"
-                onClick={() => dispatch({ type: "CLOSE_CART" })}
               >
                 Proceder al pago
-              </Link>
+              </button>
               <button
                 onClick={() => dispatch({ type: "CLOSE_CART" })}
                 className="w-full btn-outline"
@@ -179,6 +199,13 @@ export default function CartSidebar() {
           </div>
         )}
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        initialMode="login"
+      />
     </>
   );
 }
