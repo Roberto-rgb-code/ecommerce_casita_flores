@@ -95,7 +95,8 @@ export async function POST(request: Request) {
           recipientPhone: metadata.recipient_phone || '',
           senderName: metadata.sender_name,
           dedicationMessage: metadata.dedication_message,
-          stripeSessionId: order.stripe_session_id
+          stripeSessionId: order.stripe_session_id,
+          distance: metadata.distance || '0'
         })
       ]);
 
@@ -113,13 +114,15 @@ export async function POST(request: Request) {
 
 // Función para enviar notificación de WhatsApp
 async function sendWhatsAppNotification(order: any, metadata: any) {
-  // Número del negocio para recibir notificaciones de pedidos
+  // Número del negocio para recibir notificaciones de pedidos (floristería)
+  // Este es el número donde se enviará la notificación del nuevo pedido
   const businessNumber = process.env.TWILIO_WHATSAPP_TO || "3322807617";
   
   // Número del comprador para enviar confirmación
   const customerPhone = order.customer_phone;
   
   // Mensaje para el NEGOCIO (notificación de nuevo pedido)
+  const distance = metadata.distance || '0';
   const businessMessage = `🌹 *NUEVO PEDIDO PAGADO - LA CASITA DE LAS FLORES* 🌹
 
 *Datos del Cliente:*
@@ -135,6 +138,7 @@ ${metadata.sender_name ? `👤 Quien envía: ${metadata.sender_name}` : '👤 Qu
 *Datos importantes para realizar su entrega:*
 📱 Número quien recibe: ${metadata.recipient_phone || 'No proporcionado'}
 🏠 Domicilio: ${metadata.delivery_address || 'No especificado'}
+📏 Distancia: ${distance} km
 🏢 Tipo: ${metadata.address_type === 'casa' ? 'Casa habitación' : metadata.address_type === 'local' ? 'Local comercial' : 'Empresa'}
 ${metadata.address_type !== 'casa' ? `📍 Área: ${metadata.company_area || 'No especificado'}` : ''}
 📅 Día de entrega: ${metadata.delivery_date || 'No especificado'}
@@ -144,7 +148,7 @@ ${metadata.address_type !== 'casa' ? `📍 Área: ${metadata.company_area || 'No
 ${order.order_items.map((item: any) => `• ${item.products?.title || 'Producto'} x${item.quantity} - $${item.price * item.quantity}`).join('\n')}
 
 💰 Subtotal: $${metadata.subtotal || '0'}
-🚚 Envío: ${metadata.shipping_cost === '0' ? 'Gratis' : `$${metadata.shipping_cost}`}
+🚚 Envío: ${metadata.shipping_cost === '0' ? 'Gratis' : `$${metadata.shipping_cost}`} ${distance !== '0' ? `(${distance} km)` : ''}
 💰 *TOTAL PAGADO: $${metadata.total_amount || order.total_amount}*
 
 *Estado del pago:* ✅ PAGADO EXITOSAMENTE
@@ -167,13 +171,14 @@ Hola ${order.customer_name.split(' ')[0]},
 ${order.order_items.map((item: any) => `• ${item.products?.title || 'Producto'} x${item.quantity} - $${item.price * item.quantity}`).join('\n')}
 
 💰 Subtotal: $${metadata.subtotal || '0'}
-🚚 Envío: ${metadata.shipping_cost === '0' ? 'Gratis' : `$${metadata.shipping_cost}`}
+🚚 Envío: ${metadata.shipping_cost === '0' ? 'Gratis' : `$${metadata.shipping_cost}`} ${distance !== '0' ? `(${distance} km)` : ''}
 💰 *TOTAL PAGADO: $${metadata.total_amount || order.total_amount}*
 
 *Información de entrega:*
 📅 Fecha: ${metadata.delivery_date || 'Por confirmar'}
 🚚 Horario: ${metadata.delivery_route === 'matutina' ? 'Matutina (9am-2:30pm)' : 'Vespertina (2:30pm-6pm)'}
 🏠 Dirección: ${metadata.delivery_address || 'Por confirmar'}
+📏 Distancia: ${distance} km
 
 *ID de pedido:* ${order.id}
 *ID de sesión Stripe:* ${order.stripe_session_id}
@@ -185,8 +190,14 @@ Nos pondremos en contacto contigo si necesitamos más información.
     // Usar servicio de Twilio
     const whatsappService = getWhatsAppService();
     
-    // Enviar mensaje al NEGOCIO (notificación)
-    const businessResult = await whatsappService.sendMessage(businessNumber.replace('whatsapp:', '').replace('+52', ''), businessMessage);
+    // Enviar mensaje al NEGOCIO (notificación a la floristería: 3322807617)
+    // Limpiar el número del negocio: quitar prefijos si existen
+    let cleanBusinessNumber = businessNumber.replace('whatsapp:', '').replace('+52', '').replace(/[^\d]/g, '');
+    // Si no empieza con 33 (código de área de Guadalajara), asegurar formato
+    if (!cleanBusinessNumber.startsWith('33')) {
+      cleanBusinessNumber = cleanBusinessNumber.replace(/^52/, ''); // Quitar código de país si está presente
+    }
+    const businessResult = await whatsappService.sendMessage(cleanBusinessNumber, businessMessage);
     
     // Enviar mensaje al COMPRADOR (confirmación) si tiene teléfono
     let customerResult = null;

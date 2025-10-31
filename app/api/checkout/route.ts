@@ -106,7 +106,19 @@ export async function POST(request: Request) {
           city: customerCity || '',
           zipCode: customerZipCode || '',
           state: '',
-          country: 'México'
+          country: 'México',
+          // Incluir distancia y costo de envío en shipping_address
+          distance: distance || 0,
+          shippingCost: shippingCost || 0,
+          // Campos adicionales de entrega
+          recipientName: recipientName || '',
+          recipientPhone: recipientPhone || '',
+          senderName: senderName || '',
+          dedicationMessage: dedicationMessage || '',
+          isAnonymous: isAnonymous || false,
+          addressType: addressType || 'casa',
+          companyArea: companyArea || '',
+          deliveryRoute: deliveryRoute || 'matutina'
         },
         delivery_date: deliveryDate || null,
         delivery_time_slot: deliveryTimeSlot || null,

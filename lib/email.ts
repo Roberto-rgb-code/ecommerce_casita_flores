@@ -31,6 +31,7 @@ interface OrderData {
   senderName?: string;
   dedicationMessage?: string;
   stripeSessionId: string;
+  distance?: number | string;
 }
 
 export async function sendOrderConfirmationEmail(orderData: OrderData) {
@@ -245,14 +246,15 @@ function generateOrderConfirmationHTML(orderData: OrderData): string {
 
         <div class="section delivery-info">
           <div class="section-title">Información de Entrega</div>
-          <p><strong>Fecha de entrega:</strong> ${new Date(orderData.deliveryDate).toLocaleDateString('es-MX', { 
+          <p><strong>Fecha de entrega:</strong> ${orderData.deliveryDate ? new Date(orderData.deliveryDate).toLocaleDateString('es-MX', { 
             weekday: 'long', 
             year: 'numeric', 
             month: 'long', 
             day: 'numeric' 
-          })}</p>
+          }) : 'Por confirmar'}</p>
           <p><strong>Horario:</strong> ${deliveryTimeText}</p>
           <p><strong>Dirección:</strong> ${orderData.deliveryAddress}</p>
+          ${orderData.distance ? `<p><strong>Distancia:</strong> ${orderData.distance} km</p>` : ''}
           <p><strong>Teléfono de contacto:</strong> ${orderData.recipientPhone}</p>
         </div>
 
@@ -261,7 +263,7 @@ function generateOrderConfirmationHTML(orderData: OrderData): string {
           <div class="total-amount">$${orderData.total.toFixed(2)} MXN</div>
           <div style="margin-top: 10px; font-size: 14px;">
             Subtotal: $${orderData.subtotal.toFixed(2)} MXN<br>
-            Envío: ${orderData.shippingCost === 0 ? 'Gratis' : `$${orderData.shippingCost.toFixed(2)} MXN`}
+            Envío: ${orderData.shippingCost === 0 ? 'Gratis' : `$${orderData.shippingCost.toFixed(2)} MXN`}${orderData.distance && orderData.distance !== '0' ? ` (${orderData.distance} km)` : ''}
           </div>
         </div>
 
